@@ -1,6 +1,5 @@
 from fastapi import FastAPI, Request
 import asyncio
-import base64
 import telegram
 import time
 import threading
