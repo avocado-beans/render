@@ -19,9 +19,9 @@ w3 = Web3(Web3.HTTPProvider(provider_url))
 print(w3.is_connected())
 TRANSFER_EVENT_SIGNATURE = w3.keccak(text='Transfer(address,address,uint256)').hex()
 
-back_stretch = 1200
+back_stretch = 100
 front_limit = 0
-minutes = 60
+minutes = 5
 
 def get_image_url(lp_address):
     url = f'https://coinmarketcap.com/dexscan/{chain}/{lp_address}/'
@@ -293,17 +293,15 @@ async def func():
                     time.sleep(1)
 
             print(f'Found {actual_creations} potential mooners from {len(creations)} subjects.')
-            print(f'Taking a well deserved {back_stretch/20}min break...')
-            knockout = back_stretch*3*3/4
+            print(f'Taking a well deserved {round(back_stretch/30)}min break...')
+            knockout = back_stretch*2
             time.sleep(knockout)
-
 def main():
     asyncio.run(func())
 
 thread = threading.Thread(target=main,)
 thread.start()
 app = FastAPI()
-
 
 @app.get("/")
 async def confirm(request: Request):
