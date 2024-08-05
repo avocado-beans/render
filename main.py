@@ -219,7 +219,6 @@ async def func():
                         if recipient_address[:26] == '0x000000000000000000000000' and len(recipient_address) > 60:
                             recipient_address = f'0x{recipient_address[26:]}'
 
-			creations.update({f"{log['address']}": [int(log['blockNumber']), log['transactionHash'].hex()]})
                         creations.update({f"{log['address']}": [int(log['blockNumber']), log['transactionHash'].hex()]})
                         tokens.append(log['address'])
                         #print(log)
@@ -244,14 +243,14 @@ async def func():
                                         f_w.write(f'Token address: {token_address}\n')
                                         f_w.write(f'Created on block #{tx_info[0]}\n')
                                         for stat in token_stats:
-					    info_to_write = str(stat).replace("'", "") 
+                                            info_to_write = str(stat).replace("'", "") 
                                             f_w.write(f'{info_to_write}\n')
 
                                         print('Found token with potential')
                                         print(f'Token address: {token_address}')
                                         print(f'Created on block #{tx_info[0]}\n')
                                         for stat in token_stats:
-					    info_to_write = str(stat).replace("'", "") 
+                                            info_to_write = str(stat).replace("'", "") 
                                             print(f'{info_to_write}\n')
 
                                         try:
