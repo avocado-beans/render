@@ -1,5 +1,4 @@
 from fastapi import FastAPI, Request
-import gemini
 import asyncio
 import base64
 import telegram
