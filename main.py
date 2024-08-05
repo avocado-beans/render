@@ -8,7 +8,7 @@ import threading
 start = time.time()
 async def func():
     bot = telegram.Bot(os.environ['APIKEY'])
-    the_killers_monologue = "i serve no god, or country./ i fly no flag./ if i'm effective, it's because of one simple reason./ i./ don't/ give./ a./ fuck."
+    the_killers_monologue = "i am what i am./ i serve no god, or country./ i fly no flag./ if i'm effective, it's because of one simple reason./ i./ don't/ give./ a./ fuck."
     for i in the_killers_monologue.split('/'):
         await bot.sendMessage(chat_id='@th3k1ll3r', text="i)
         time.sleep(2)
