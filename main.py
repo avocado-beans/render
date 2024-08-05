@@ -219,7 +219,8 @@ async def func():
                         if recipient_address[:26] == '0x000000000000000000000000' and len(recipient_address) > 60:
                             recipient_address = f'0x{recipient_address[26:]}'
 
-                        creations.update({f'{log['address']}': [int(log['blockNumber']), log['transactionHash'].hex()]})
+			creations.update({f"{log['address']}": [int(log['blockNumber']), log['transactionHash'].hex()]})
+                        creations.update({f"{log['address']}": [int(log['blockNumber']), log['transactionHash'].hex()]})
                         tokens.append(log['address'])
                         #print(log)
                 except:
@@ -243,13 +244,15 @@ async def func():
                                         f_w.write(f'Token address: {token_address}\n')
                                         f_w.write(f'Created on block #{tx_info[0]}\n')
                                         for stat in token_stats:
-                                            f_w.write(f'{str(stat).replace("'", "")}\n')
+					    info_to_write = str(stat).replace("'", "") 
+                                            f_w.write(f'{info_to_write}\n')
 
                                         print('Found token with potential')
                                         print(f'Token address: {token_address}')
                                         print(f'Created on block #{tx_info[0]}\n')
                                         for stat in token_stats:
-                                            print(f'{str(stat).replace("'", "")}\n')
+					    info_to_write = str(stat).replace("'", "") 
+                                            print(f'{info_to_write}\n')
 
                                         try:
                                             print('trying to get name and symbol')
@@ -280,9 +283,9 @@ async def func():
                                             print(f'Name: {token_name}')
                                             print(f'Symbol: {token_symbol}')
 
-                                            await bot.sendMessage(chat_id='@th3k1ll3r', text=f'{token_symbol} \n({bscscan_api.replace('api.','').replace('/api/', '')}/token/{token_address})')
+                                            await bot.sendMessage(chat_id='@th3k1ll3r', text=f"{token_symbol} \n({bscscan_api.replace('api.','').replace('/api/', '')}/token/{token_address})")
                                             for stat in token_stats:
-                                                await bot.sendMessage(chat_id='@th3k1ll3r', text=f'current token price: {stat['relative_token_price']}\n(https://coinmarketcap.com/dexscan/{chain}/{stat['contract_wallet_address']})')
+                                                await bot.sendMessage(chat_id='@th3k1ll3r', text=f"current token price: {stat['relative_token_price']}\n(https://coinmarketcap.com/dexscan/{chain}/{stat['contract_wallet_address']})")
                                             print('saved name and symbol')
                                         except:
                                             print('could not parse name and symbol...')
