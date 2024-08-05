@@ -10,7 +10,7 @@ async def func():
     bot = telegram.Bot(os.environ['APIKEY'])
     async with bot:
         while True:
-            await bot.sendMessage(chat_id='@thek1ll3r', text=f'~{round(time.time()-start/60)} minutes have passed since i have been alive')
+            await bot.sendMessage(chat_id='@thek1ll3r', text=f'~{round((time.time()-start)/60)} minutes have passed since i have been alive')
             time.sleep(60)
 
 def main():
