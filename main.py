@@ -276,9 +276,6 @@ async def func():
 
                                             f_w.write(f'Name: {token_name}\n')
                                             f_w.write(f'Symbol: {token_symbol}\n')
-                                            with open('ledger.txt', 'a') as f_x:
-                                                f_x.write(f'{token_symbol}: {token_address}\n')
-                                                f_x.close()
 
                                             print(f'Name: {token_name}')
                                             print(f'Symbol: {token_symbol}')
