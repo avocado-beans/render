@@ -305,4 +305,24 @@ app = FastAPI()
 
 @app.get("/")
 async def confirm(request: Request):
-    return "Your server is working!"
+    return """
+I find music a useful distraction. A focus tool.
+
+[background sounds fade]
+
+Keeps the inner voice from wandering.
+
+[“How Soon Is Now?” by The Smiths plays]
+
+[muffled song continues on headphones]
+
+My process is purely logistical, narrowly focused by design. I’m not here to take sides. It’s not my place to formulate any opinion.
+
+♪ Of a shyness That is criminally vulgar… ♪
+
+No one who can afford me needs to waste time winning me to some cause. I serve no God or country. I fly no flag.
+
+♪ I go about things the wrong way? ♪
+
+If I’m effective, it’s because of one simple fact. I… don’t… give… a… fuck.
+"""
