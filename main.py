@@ -176,7 +176,7 @@ def get_contract_wallet_txns(token_address, latest_block):
 
 async def func():
     bot = telegram.Bot(os.environ['TELEBOTAPI'])
-    the_killers_monologue = "i am what i am./ i serve no god, or country./ i fly no flag./ if i'm effective, it's because of one simple fact./ i./ don't./ give./ a./ fuck."
+    the_killers_monologue = "I am what I am./ I serve no god or country./ I fly no flag./ If I'm effective, it's because of one simple fact./ I./ don't./ give./ a./ fuck."
     for line in the_killers_monologue.split('/'):
         await bot.sendMessage(chat_id='@th3k1ll3r', text=line)
         if len(line) <= 8:
@@ -309,24 +309,4 @@ app = FastAPI()
 
 @app.get("/")
 async def confirm(request: Request):
-    return """
-I find music a useful distraction. A focus tool.
-
-[background sounds fade]
-
-Keeps the inner voice from wandering.
-
-[“How Soon Is Now?” by The Smiths plays]
-
-[muffled song continues on headphones]
-
-My process is purely logistical, narrowly focused by design. I’m not here to take sides. It’s not my place to formulate any opinion.
-
-♪ Of a shyness That is criminally vulgar… ♪
-
-No one who can afford me needs to waste time winning me to some cause. I serve no God or country. I fly no flag.
-
-♪ I go about things the wrong way? ♪
-
-If I’m effective, it’s because of one simple fact. I… don’t… give… a… fuck.
-"""
+    return """My process is purely logistical, narrowly focused by design. I’m not here to take sides. It’s not my place to formulate any opinion. No one who can afford me needs to waste time winning me to some cause."""
