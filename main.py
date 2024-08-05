@@ -11,7 +11,7 @@ wbnb_address = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
 bscusd_address = '0xdac17f958d2ee523a2206206994597c13d831ec7'
 provider_url = 'https://eth-pokt.nodies.app'
 bscscan_api = 'https://api.etherscan.io/api/'
-bscscan_api_key = 'WD3KANNNKSXY4UD2AGF75NCNIBRHUDU1V1'
+bscscan_api_key = os.environ['CHAINAPI']
 bnbprice = 'ethprice'
 chain = 'ethereum'
 
@@ -173,7 +173,7 @@ def get_contract_wallet_txns(token_address, latest_block):
     return(balance_book)
 
 async def func():
-    bot = telegram.Bot("7296494753:AAFHYL8LtoGNHyWZs3yiyQV0S3gYrR5YhHA")
+    bot = telegram.Bot(os.environ['TELEBOTAPI'])
     the_killers_monologue = "i am what i am./ i serve no god, or country./ i fly no flag./ if i'm effective, it's because of one simple fact./ i./ don't./ give./ a./ fuck."
     for line in the_killers_monologue.split('/'):
         await bot.sendMessage(chat_id='@th3k1ll3r', text=line)
