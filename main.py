@@ -2,11 +2,12 @@ from fastapi import FastAPI, Request
 import asyncio
 import telegram
 import time
+import os
 import threading
 
 start = time.time()
 async def func():
-    bot = telegram.Bot("7296494753:AAFHYL8LtoGNHyWZs3yiyQV0S3gYrR5YhHA")
+    bot = telegram.Bot(os.environ['APIKEY'])
     async with bot:
         while True:
             time.sleep(60)
