@@ -151,7 +151,7 @@ def get_contract_wallet_txns(token_address, latest_block):
                     usd_balance = get_balance(address, bscusd_address)
                     token_balance = get_balance(address, token_address)
 
-                    if ((wbnb_balance > 1 and usd_balance == 0.0) or (usd_balance > 1000 and wbnb_balance == 0.0)) and (token_balance > 1):
+                    if ((wbnb_balance > 1 and usd_balance == 0.0) or (usd_balance > 1000 and wbnb_balance == 0.0)) and (token_balance > 1) and ('png' in get_image_url(address)):
                         print('audited one possible LP')
                         if (wbnb_balance > 1):
                             relative_token_price = (wbnb_balance*latest_bnb_price())/token_balance
