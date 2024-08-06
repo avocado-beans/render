@@ -151,22 +151,23 @@ def get_contract_wallet_txns(token_address, latest_block):
                     usd_balance = get_balance(address, bscusd_address)
                     token_balance = get_balance(address, token_address)
 
-                    if ((wbnb_balance > 1 and usd_balance == 0.0) or (usd_balance > 1000 and wbnb_balance == 0.0)) and (token_balance > 1) and ('png' in get_image_url(address)):
-                        print('audited one possible LP')
-                        if (wbnb_balance > 1):
-                            relative_token_price = (wbnb_balance*latest_bnb_price())/token_balance
-                        if (usd_balance > 1):
-                            relative_token_price = usd_balance/token_balance
+                    if ((wbnb_balance > 1 and usd_balance == 0.0) or (usd_balance > 1000 and wbnb_balance == 0.0)) and (token_balance > 1):
+                        if ('png' in get_image_url(address)):
+                            print('audited one possible LP')
+                            if (wbnb_balance > 1):
+                                relative_token_price = (wbnb_balance*latest_bnb_price())/token_balance
+                            if (usd_balance > 1):
+                                relative_token_price = usd_balance/token_balance
 
-                        response ={
-		                      f'contract_wallet_address': address,
-                              f'relative_token_price': f'${relative_token_price}',
-                              f'token_balance': token_balance,
-                              f'wbnb_balance': wbnb_balance,
-                              f'bsc-usd_balance': usd_balance,
-                              }
+                            response ={
+                                f'contract_wallet_address': address,
+                                f'relative_token_price': f'${relative_token_price}',
+                                f'token_balance': token_balance,
+                                f'wbnb_balance': wbnb_balance,
+                                f'bsc-usd_balance': usd_balance,
+                                }
 
-                        balance_book.append(response)
+                            balance_book.append(response)
 
     if len(balance_book) > 0:
         print(f'Found {len(balance_book)} potential LPs for the token: {token_address}')
