@@ -178,13 +178,16 @@ def get_contract_wallet_txns(token_address, latest_block):
 
 async def func():
     bot = telegram.Bot(os.environ['TELEBOTAPI'])
-    the_killers_monologue = "I am what I am./ I serve no god or country./ I fly no flag./ If I'm effective, it's because of one simple fact./ I./ don't./ give./ a./ fuck."
+    """
+    the_killers_monologue = "i am what i am./ i serve no god, or country./ i fly no flag./ if i'm effective, it's because of one simple fact./ i./ don't./ give./ a./ fuck."
     for line in the_killers_monologue.split('/'):
         await bot.sendMessage(chat_id='@th3k1ll3r', text=line)
         if len(line) <= 8:
             time.sleep(1)
         else:
             time.sleep(3)
+    """
+    await bot.sendMessage(chat_id='@th3k1ll3r', text="bravo 6, going dark")
     async with bot:
         while True:
             latest_block = w3.eth.block_number
