@@ -152,7 +152,8 @@ def get_contract_wallet_txns(token_address, latest_block):
                     token_balance = get_balance(address, token_address)
 
                     if ((wbnb_balance > 1 and usd_balance == 0.0) or (usd_balance > 1000 and wbnb_balance == 0.0)) and (token_balance > 1):
-                        if ('png' in get_image_url(address)):
+                        image_url = get_image_url(address)
+                        if ('png' in image_url):
                             print('audited one possible LP')
                             if (wbnb_balance > 1):
                                 relative_token_price = (wbnb_balance*latest_bnb_price())/token_balance
@@ -165,6 +166,7 @@ def get_contract_wallet_txns(token_address, latest_block):
                                 f'token_balance': token_balance,
                                 f'wbnb_balance': wbnb_balance,
                                 f'bsc-usd_balance': usd_balance,
+                                f'image_url': image_url
                                 }
 
                             balance_book.append(response)
@@ -283,10 +285,9 @@ async def func():
 
                                             print(f'Name: {token_name}')
                                             print(f'Symbol: {token_symbol}')
-
-                                            await bot.sendMessage(chat_id='@th3k1ll3r', text=f"{token_symbol} \n({bscscan_api.replace('api.','').replace('/api/', '')}/token/{token_address})")
                                             for stat in token_stats:
-                                                await bot.sendMessage(chat_id='@th3k1ll3r', text=f"current token price: {stat['relative_token_price']}\n(https://coinmarketcap.com/dexscan/{chain}/{stat['contract_wallet_address']})")
+                                                await bot.sendMessage(chat_id='@th3k1ll3r', text=f"{token_symbol}: {stat['image_url']}")
+                                                await bot.sendMessage(chat_id='@th3k1ll3r', text=f"current token price: {stat['relative_token_price']}\n\n(https://coinmarketcap.com/dexscan/{chain}/{stat['contract_wallet_address']})\n\n({bscscan_api.replace('api.','').replace('/api/', '')}/token/{token_address})")
                                             print('saved name and symbol')
                                         except:
                                             print('could not parse name and symbol...')
