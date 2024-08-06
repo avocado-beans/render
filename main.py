@@ -297,9 +297,10 @@ async def func():
                     time.sleep(1)
 
             print(f'Found {actual_creations} potential mooners from {len(creations)} subjects.')
-            print(f'Taking a well deserved {round(back_stretch/30)}min break...')
-            knockout = back_stretch*3
+            knockout = back_stretch*2
+            print(f'Taking a well deserved {round(knockout/60)}-minute break...')
             time.sleep(knockout)
+		
 def main():
     asyncio.run(func())
 
