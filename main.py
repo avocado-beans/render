@@ -138,7 +138,7 @@ def get_contract_wallet_txns(token_address, latest_block):
     balance_book = []
     accounts = []
     total_no_of_logs = len(logs)-1
-    print(f'suspect ({token_address}) has had {total_no_of_logs-1} events since creation')
+    print(f'suspect ({token_address}) has had {total_no_of_logs} events since creation')
     if len(logs) > 100:
         logs = logs[-100:]
         print('minimized')
