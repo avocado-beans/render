@@ -27,6 +27,13 @@ w3 = Web3(Web3.HTTPProvider(provider_url))
 print(w3.is_connected())
 TRANSFER_EVENT_SIGNATURE = w3.keccak(text='Transfer(address,address,uint256)').hex()
 
+blockspermin = 20
+minutes = 5
+back_stretch_minutes = 60
+width = minutes*blockspermin
+back_stretch = back_stretch_minutes*blockspermin
+front_limit = back_stretch - width
+
 def get_image_url(lp_address):
     url = f'https://coinmarketcap.com/dexscan/{chain}/{lp_address}/'
     try:
@@ -182,34 +189,13 @@ def get_contract_wallet_txns(token_address, latest_block, back_stretch):
 async def func():
     bot = telegram.Bot(os.environ['TELEBOTAPI'])
     await bot.sendMessage(chat_id='@th3k1ll3r', text=f"target chain: {chain.lower()}")
-    
-    anchors = []
-    for i in range(5):
-        anchors.append(w3.eth.block_number)
-        time.sleep(60)
-    
-    minutes = 5
-    back_stretch_minutes = 60
-    width = minutes*round(sum(anchors)/len(anchors))
-    back_stretch = back_stretch_minutes*round(sum(anchors)/len(anchors))
-    front_limit = back_stretch - width
-
-    tyme = 1
+    time.sleep(5)
     await bot.sendMessage(chat_id='@th3k1ll3r', text="bravo6.. going dark")
     print("bravo6.. going dark")
     
     while True:
         p_start = time.time()
-
         latest_block = w3.eth.block_number
-        anchors = anchors[-4:]
-        anchors.append(latest_block)
-
-        if tyme % 5 == 0:
-            width = minutes*round(sum(anchors)/len(anchors))
-            back_stretch = back_stretch_minutes*round(sum(anchors)/len(anchors))
-            front_limit = back_stretch - width
-            tyme-=tyme          
 
         print('\n***************************************')
         print(f'checking what happened (~{back_stretch/(60*round(sum(anchors)/len(anchors)))}hrs) ago on {chain.upper()}...')
