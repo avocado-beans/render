@@ -185,136 +185,145 @@ def get_contract_wallet_txns(token_address, latest_block):
     print(f'finished in {round(time.time()-start)} seconds')
     return(balance_book)
 
-async def func():
+def func():
     bot = telegram.Bot(os.environ['TELEBOTAPI'])
-    async with bot:
-        await bot.sendMessage(chat_id='@th3k1ll3r', text="bravo 6, going dark")
-        print("bravo 6, going dark")
-        while True:
-            p_start = time.time()
-            latest_block = w3.eth.block_number
-            print('\n***************************************')
-            print(f'checking what happened {back_stretch} blocks (~{back_stretch/1200}hrs) ago on {chain.upper()}...')
-            no_of_chunks = round(minutes/5)
+    asyncio.run(bot.sendMessage(chat_id='@th3k1ll3r', text="bravo6, going dark"))
+    print("bravo6, going dark")
+    while True:
+        p_start = time.time()
+        latest_block = w3.eth.block_number
+        print('\n***************************************')
+        print(f'checking what happened {back_stretch} blocks (~{back_stretch/1200}hrs) ago on {chain.upper()}...')
+        no_of_chunks = round(minutes/5)
 
-            for i in range(no_of_chunks):
-                print(f'parsing chunk {i+1}: { latest_block - (back_stretch - 100*i)} to {latest_block - (back_stretch - 100*(i+1))}')
-                filter_params = {
-        	    'fromBlock': latest_block - (back_stretch - 100*i),
-            	    'toBlock': latest_block - (back_stretch - 100*(i+1)),
-                    'topics': [TRANSFER_EVENT_SIGNATURE]
-                }
-                logs = w3.eth.get_logs(filter_params)
-                print('finished parsing chunk')
-                if i == 0:
-                    t_logs = logs
-                elif i > 0:
-                    t_logs += logs
+        for i in range(no_of_chunks):
+            print(f'parsing chunk {i+1}: { latest_block - (back_stretch - 100*i)} to {latest_block - (back_stretch - 100*(i+1))}')
+            filter_params = {
+            'fromBlock': latest_block - (back_stretch - 100*i),
+                'toBlock': latest_block - (back_stretch - 100*(i+1)),
+                'topics': [TRANSFER_EVENT_SIGNATURE]
+            }
+            logs = w3.eth.get_logs(filter_params)
+            print('finished parsing chunk')
+            if i == 0:
+                t_logs = logs
+            elif i > 0:
+                t_logs += logs
 
-            creations = {}
-            print(f'Done parsing logs ({len(logs)}). now analyzing...')
-            tokens = []
-            for log in t_logs:
-                try:
-                    value = int.from_bytes(log['data'], byteorder='big') / 10**18
-                    zeroes = str(value).replace('.','').count('0')
-                    sender_address = str(w3.to_hex(log['topics'][1]))
-                    recipient_address = str(w3.to_hex(log['topics'][2]))
+        creations = {}
+        print(f'Done parsing logs ({len(logs)}). now analyzing...')
+        tokens = []
+        for log in t_logs:
+            try:
+                value = int.from_bytes(log['data'], byteorder='big') / 10**18
+                zeroes = str(value).replace('.','').count('0')
+                sender_address = str(w3.to_hex(log['topics'][1]))
+                recipient_address = str(w3.to_hex(log['topics'][2]))
 
-                    if is_null(sender_address, 'x') is True \
-                        and is_null(recipient_address, 'x') is False \
-                        and value >= 10**6 \
-                        and not log['address'] in tokens:
-                        if recipient_address[:26] == '0x000000000000000000000000' and len(recipient_address) > 60:
-                            recipient_address = f'0x{recipient_address[26:]}'
+                if is_null(sender_address, 'x') is True \
+                    and is_null(recipient_address, 'x') is False \
+                    and value >= 10**6 \
+                    and not log['address'] in tokens:
+                    if recipient_address[:26] == '0x000000000000000000000000' and len(recipient_address) > 60:
+                        recipient_address = f'0x{recipient_address[26:]}'
 
-                        creations.update({f"{log['address']}": [int(log['blockNumber']), log['transactionHash'].hex()]})
-                        tokens.append(log['address'])
-                        #print(log)
-                except:
-                    pass
+                    creations.update({f"{log['address']}": [int(log['blockNumber']), log['transactionHash'].hex()]})
+                    tokens.append(log['address'])
+                    #print(log)
+            except:
+                pass
 
-            print(f'created ledger ({len(creations)} subjects). going deeper.')
-            actual_creations = 0
-            if len(creations) > 0:
-                for token_address, tx_info in creations.items():
-                    if is_creation_tx(token_address, tx_info):
-                        token_stats = get_contract_wallet_txns(token_address, latest_block)
-                        if len(token_stats) > 0:
-                            print(f'\n--------------------------------')
-                            with open('record_book.txt', 'r') as f:
-                                if token_address in ''.join(f.readlines()):
-                                    print('token already in DB')
-                                elif not token_address in ''.join(f.readlines()):
-                                    actual_creations += 1
-                                    with open('record_book.txt', 'a') as f_w:
-                                        f_w.write('Found token with potential\n')
-                                        f_w.write(f'Token address: {token_address}\n')
-                                        f_w.write(f'Created on block #{tx_info[0]}\n')
+        print(f'created ledger ({len(creations)} subjects). going deeper.')
+        actual_creations = 0
+        if len(creations) > 0:
+            for token_address, tx_info in creations.items():
+                if is_creation_tx(token_address, tx_info):
+                    token_stats = get_contract_wallet_txns(token_address, latest_block)
+                    if len(token_stats) > 0:
+                        print(f'\n--------------------------------')
+                        with open('record_book.txt', 'r') as f:
+                            if token_address in ''.join(f.readlines()):
+                                print('token already in DB')
+                            elif not token_address in ''.join(f.readlines()):
+                                actual_creations += 1
+                                with open('record_book.txt', 'a') as f_w:
+                                    f_w.write('Found token with potential\n')
+                                    f_w.write(f'Token address: {token_address}\n')
+                                    f_w.write(f'Created on block #{tx_info[0]}\n')
+                                    for stat in token_stats:
+                                        info_to_write = str(stat).replace("'", "")
+                                        f_w.write(f'{info_to_write}\n')
+
+                                    print('Found token with potential')
+                                    print(f'Token address: {token_address}')
+                                    print(f'Created on block #{tx_info[0]}\n')
+                                    for stat in token_stats:
+                                        info_to_write = str(stat).replace("'", "")
+                                        print(f'{info_to_write}\n')
+
+                                    try:
+                                        print('trying to get name and symbol')
+                                        abi = [{"inputs":[],
+                                        "name":"name",
+                                        "outputs":[{
+                                            "internalType":"string",
+                                            "name":"",
+                                            "type":"string"}],
+                                        "stateMutability":"view",
+                                        "type":"function"},
+                                        {"inputs":[],
+                                        "name":"symbol",
+                                        "outputs":[{
+                                            "internalType":"string",
+                                            "name":"",
+                                            "type":"string"}],
+                                        "stateMutability":"view",
+                                        "type":"function"}]
+
+                                        contract = w3.eth.contract(token_address , abi = abi)
+                                        token_name = contract.functions.name().call()
+                                        token_symbol = contract.functions.symbol().call()
+
+                                        f_w.write(f'Name: {token_name}\n')
+                                        f_w.write(f'Symbol: {token_symbol}\n')
+
+                                        print(f'Name: {token_name}')
+                                        print(f'Symbol: {token_symbol}')
                                         for stat in token_stats:
-                                            info_to_write = str(stat).replace("'", "") 
-                                            f_w.write(f'{info_to_write}\n')
+                                            asyncio.run(bot.sendMessage(chat_id='@th3k1ll3r', text=f"{token_symbol}: {stat['image_url']}"))
+                                            asyncio.run(bot.sendMessage(chat_id='@th3k1ll3r', text=f"current token price: {stat['relative_token_price']}\n\n(https://coinmarketcap.com/dexscan/{chain}/{stat['contract_wallet_address']})\n\n({bscscan_api.replace('api.','').replace('/api/', '')}/token/{token_address})"))
+                                        print('saved name and symbol')
+                                    except:
+                                        print('could not parse name and symbol...')
+                                    f_w.write('\n')
+                                    f_w.close()
+                            f.close()
+                        print(f'--------------------------------\n')
+                time.sleep(1)
 
-                                        print('Found token with potential')
-                                        print(f'Token address: {token_address}')
-                                        print(f'Created on block #{tx_info[0]}\n')
-                                        for stat in token_stats:
-                                            info_to_write = str(stat).replace("'", "") 
-                                            print(f'{info_to_write}\n')
+        print(f'Found {actual_creations} potential mooners from {len(creations)} subjects.')
+        knockout = 300
+        print(f'Finished search round in {round(time.time()-p_start)} seconds.')
+        print(f'Taking a well deserved {round(knockout/60)}-minute break...')
+        time.sleep(knockout)
 
-                                        try:
-                                            print('trying to get name and symbol')
-                                            abi = [{"inputs":[],
-                                            "name":"name",
-                                            "outputs":[{
-                                                "internalType":"string",
-                                                "name":"",
-                                                "type":"string"}],
-                                            "stateMutability":"view",
-                                            "type":"function"},
-                                            {"inputs":[],
-                                            "name":"symbol",
-                                            "outputs":[{
-                                                "internalType":"string",
-                                                "name":"",
-                                                "type":"string"}],
-                                            "stateMutability":"view",
-                                            "type":"function"}]
-
-                                            contract = w3.eth.contract(token_address , abi = abi)
-                                            token_name = contract.functions.name().call()
-                                            token_symbol = contract.functions.symbol().call()
-
-                                            f_w.write(f'Name: {token_name}\n')
-                                            f_w.write(f'Symbol: {token_symbol}\n')
-
-                                            print(f'Name: {token_name}')
-                                            print(f'Symbol: {token_symbol}')
-                                            for stat in token_stats:
-                                                await bot.sendMessage(chat_id='@th3k1ll3r', text=f"{token_symbol}: {stat['image_url']}")
-                                                await bot.sendMessage(chat_id='@th3k1ll3r', text=f"current token price: {stat['relative_token_price']}\n\n(https://coinmarketcap.com/dexscan/{chain}/{stat['contract_wallet_address']})\n\n({bscscan_api.replace('api.','').replace('/api/', '')}/token/{token_address})")
-                                            print('saved name and symbol')
-                                        except:
-                                            print('could not parse name and symbol...')
-                                        f_w.write('\n')
-                                        f_w.close()
-                                f.close()
-                            print(f'--------------------------------\n')
-                    time.sleep(1)
-
-            print(f'Found {actual_creations} potential mooners from {len(creations)} subjects.')
-            knockout = 300
-            print(f'Finished search round in {round(time.time()-p_start)} seconds.')
-            print(f'Taking a well deserved {round(knockout/60)}-minute break...')
-            time.sleep(knockout)
 
 def main():
     asyncio.run(func())
 
-thread = threading.Thread(target=main,)
-thread.start()
-app = FastAPI()
+mainthread = threading.Thread(target=main,)
+mainthread.start()
 
-@app.get("/")
-async def confirm(request: Request):
-    return """My process is purely logistical, narrowly focused by design. I’m not here to take sides. It’s not my place to formulate any opinion. No one who can afford me needs to waste time winning me to some cause."""
+def side():
+    app = FastAPI()
+
+    @app.get("/")
+    async def confirm(request: Request):
+        return """My process is purely logistical, narrowly focused by design. I’m not here to take sides. It’s not my place to formulate any opinion. No one who can afford me needs to waste time winning me to some cause."""
+
+sidethread = threading.Thread(target=side,)
+sidethread.start()
+
+while True:
+    time.sleep(1)
+    pass
