@@ -187,9 +187,9 @@ def get_contract_wallet_txns(token_address, latest_block):
 
 async def func():
     bot = telegram.Bot(os.environ['TELEBOTAPI'])
-    await bot.sendMessage(chat_id='@th3k1ll3r', text="bravo 6, going dark")
-    print("bravo 6, going dark")
     async with bot:
+        await bot.sendMessage(chat_id='@th3k1ll3r', text="bravo 6, going dark")
+        print("bravo 6, going dark")
         while True:
             p_start = time.time()
             latest_block = w3.eth.block_number
@@ -303,7 +303,7 @@ async def func():
                     time.sleep(1)
 
             print(f'Found {actual_creations} potential mooners from {len(creations)} subjects.')
-            knockout = 300#(back_stretch*3)*0.1
+            knockout = 300
             print(f'Finished search round in {round(time.time()-p_start)} seconds.')
             print(f'Taking a well deserved {round(knockout/60)}-minute break...')
             time.sleep(knockout)
