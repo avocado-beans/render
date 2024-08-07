@@ -190,8 +190,8 @@ async def func():
     bot = telegram.Bot(os.environ['TELEBOTAPI'])
     await bot.sendMessage(chat_id='@th3k1ll3r', text=f"target chain: {chain.lower()}")
     time.sleep(5)
-    await bot.sendMessage(chat_id='@th3k1ll3r', text="⚠ bravo6, going dark ⚠")
-    print("⚠ bravo6, going dark ⚠")
+    await bot.sendMessage(chat_id='@th3k1ll3r', text="bravo6\ngoing dark")
+    print("bravo6\ngoing dark")
     
     while True:
         p_start = time.time()
@@ -303,8 +303,7 @@ async def func():
                                         print(f'Name: {token_name}')
                                         print(f'Symbol: {token_symbol}')
                                         for stat in token_stats:
-                                            await bot.sendMessage(chat_id='@th3k1ll3r', text=f"{token_symbol}: {stat['image_url']}")
-                                            await bot.sendMessage(chat_id='@th3k1ll3r', text=f"current token price: {stat['relative_token_price']}\n\n(https://coinmarketcap.com/dexscan/{chain}/{stat['contract_wallet_address']})\n\n({bscscan_api.replace('api.','').replace('/api/', '')}/token/{token_address})")
+                                            await bot.sendMessage(chat_id='@th3k1ll3r', text=f"⚠{token_symbol}⚠: {stat['image_url']}\ncurrent token price: {stat['relative_token_price']}\n\n(https://coinmarketcap.com/dexscan/{chain}/{stat['contract_wallet_address']})\n\n({bscscan_api.replace('api.','').replace('/api/', '')}/token/{token_address})")
                                         print('saved name and symbol')
                                     except:
                                         print('could not parse name and symbol...')
