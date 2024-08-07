@@ -303,7 +303,7 @@ async def func():
                                         print(f'Name: {token_name}')
                                         print(f'Symbol: {token_symbol}')
                                         for stat in token_stats:
-                                            sign = ⚠ if ('png' in stat['image_url']) else ⬛
+                                            sign = '⚠' if ('png' in stat['image_url']) else '⬛'
                                             await bot.sendMessage(chat_id='@th3k1ll3r', text=f"{sign}{token_symbol}{sign}: {stat['image_url']}\ncurrent token price: {stat['relative_token_price']}\n\n(https://coinmarketcap.com/dexscan/{chain}/{stat['contract_wallet_address']})\n\n({bscscan_api.replace('api.','').replace('/api/', '')}/token/{token_address})")print('saved name and symbol')
                                         print('saved name and symbol')
                                     except:
