@@ -7,14 +7,23 @@ import asyncio
 import time
 import os
 
-chain = 'bsc'
+
 wbnb_address = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
 bscusd_address = '0xdac17f958d2ee523a2206206994597c13d831ec7'
 provider_url = 'https://eth-pokt.nodies.app'
 bscscan_api = 'https://api.etherscan.io/api/'
-bscscan_api_key = os.environ['CHAINAPI']
+bscscan_api_key = os.environ['ETHCHAINAPI']
 bnbprice = 'ethprice'
 chain = 'ethereum'
+chain = 'bsc'
+
+if chain == 'bsc':
+    wbnb_address = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
+    bscusd_address = '0x55d398326f99059ff775485246999027b3197955'
+    provider_url = 'https://bsc-pokt.nodies.app'
+    bscscan_api = 'https://api.bscscan.com/api/'
+    bscscan_api_key = os.environ['BSCCHAINAPI']
+    bnbprice = 'bnbprice'
 
 w3 = Web3(Web3.HTTPProvider(provider_url))
 print(w3.is_connected())
