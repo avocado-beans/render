@@ -27,9 +27,16 @@ w3 = Web3(Web3.HTTPProvider(provider_url))
 print(w3.is_connected())
 TRANSFER_EVENT_SIGNATURE = w3.keccak(text='Transfer(address,address,uint256)').hex()
 
-back_stretch = 1200
-front_limit = 1100
-minutes = (back_stretch-front_limit) / 20
+anchors = []
+for i in range(5):
+    anchors.append(w3.eth.block_number)
+    time.sleep(60)
+
+minutes = 5
+back_stretch_minutes = 60
+width = minutes*round(sum(anchors)/len(anchors))
+back_stretch = back_stretch_minutes*round(sum(anchors)/len(anchors))
+front_limit = back_stretch - width
 
 def get_image_url(lp_address):
     url = f'https://coinmarketcap.com/dexscan/{chain}/{lp_address}/'
