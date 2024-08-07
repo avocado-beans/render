@@ -185,7 +185,7 @@ def get_contract_wallet_txns(token_address, latest_block):
     print(f'finished in {round(time.time()-start)} seconds')
     return(balance_book)
 
-def func():
+def main():
     bot = telegram.Bot(os.environ['TELEBOTAPI'])
     asyncio.run(bot.sendMessage(chat_id='@th3k1ll3r', text="bravo6, going dark"))
     print("bravo6, going dark")
@@ -306,10 +306,6 @@ def func():
         print(f'Finished search round in {round(time.time()-p_start)} seconds.')
         print(f'Taking a well deserved {round(knockout/60)}-minute break...')
         time.sleep(knockout)
-
-
-def main():
-    asyncio.run(func())
 
 mainthread = threading.Thread(target=main,)
 mainthread.start()
