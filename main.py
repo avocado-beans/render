@@ -190,15 +190,15 @@ async def func():
     bot = telegram.Bot(os.environ['TELEBOTAPI'])
     await bot.sendMessage(chat_id='@th3k1ll3r', text=f"target chain: {chain.lower()}")
     time.sleep(5)
-    await bot.sendMessage(chat_id='@th3k1ll3r', text="bravo6.. going dark")
-    print("bravo6.. going dark")
+    await bot.sendMessage(chat_id='@th3k1ll3r', text="bravo6\n going dark")
+    print("bravo6\n going dark")
     
     while True:
         p_start = time.time()
         latest_block = w3.eth.block_number
 
         print('\n***************************************')
-        print(f'checking what happened (~{back_stretch/(60*round(sum(anchors)/len(anchors)))}hrs) ago on {chain.upper()}...')
+        print(f'checking what happened (~{back_stretch/(60*blockspermin)}hrs) ago on {chain.upper()}...')
         no_of_chunks = round(minutes/5)
     
         print(f'took {latest_block} as latest block')
