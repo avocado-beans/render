@@ -195,8 +195,8 @@ async def func():
     front_limit = back_stretch - width
 
     tyme = 1
-    await bot.sendMessage(chat_id='@th3k1ll3r', text="bravo6, going dark")
-    print("bravo6, going dark")
+    await bot.sendMessage(chat_id='@th3k1ll3r', text="bravo 6, going dark")
+    print("bravo 6, going dark")
     
     while True:
         p_start = time.time()
