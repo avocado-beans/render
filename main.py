@@ -188,6 +188,7 @@ def get_contract_wallet_txns(token_address, latest_block):
 async def func():
     bot = telegram.Bot(os.environ['TELEBOTAPI'])
     await bot.sendMessage(chat_id='@th3k1ll3r', text="bravo 6, going dark")
+    print("bravo 6, going dark")
     async with bot:
         while True:
             p_start = time.time()
