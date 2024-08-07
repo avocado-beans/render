@@ -182,23 +182,15 @@ def get_contract_wallet_txns(token_address, latest_block):
 
     if len(balance_book) > 0:
         print(f'Found {len(balance_book)} potential LPs for the token: {token_address}')
-    print(f'finished in {time.time()-start} seconds')
+    print(f'finished in {round(time.time()-start)} seconds')
     return(balance_book)
 
 async def func():
     bot = telegram.Bot(os.environ['TELEBOTAPI'])
-    """
-    the_killers_monologue = "i am what i am./ i serve no god, or country./ i fly no flag./ if i'm effective, it's because of one simple fact./ i./ don't./ give./ a./ fuck."
-    for line in the_killers_monologue.split('/'):
-        await bot.sendMessage(chat_id='@th3k1ll3r', text=line)
-        if len(line) <= 8:
-            time.sleep(1)
-        else:
-            time.sleep(3)
-    """
     await bot.sendMessage(chat_id='@th3k1ll3r', text="bravo 6, going dark")
     async with bot:
         while True:
+            p_start = time.time()
             latest_block = w3.eth.block_number
             print('\n***************************************')
             print(f'checking what happened {back_stretch} blocks (~{back_stretch/1200}hrs) ago on {chain.upper()}...')
@@ -311,9 +303,10 @@ async def func():
 
             print(f'Found {actual_creations} potential mooners from {len(creations)} subjects.')
             knockout = (back_stretch*3)*0.75
+            print(f'Finished search round in {round(time.time()-p_start)} seconds.')
             print(f'Taking a well deserved {round(knockout/60)}-minute break...')
             time.sleep(knockout)
-		
+
 def main():
     asyncio.run(func())
 
