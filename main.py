@@ -190,8 +190,8 @@ async def func():
     bot = telegram.Bot(os.environ['TELEBOTAPI'])
     await bot.sendMessage(chat_id='@th3k1ll3r', text=f"target chain: {chain.lower()}")
     time.sleep(5)
-    await bot.sendMessage(chat_id='@th3k1ll3r', text="bravo6\n going dark")
-    print("bravo6\n going dark")
+    await bot.sendMessage(chat_id='@th3k1ll3r', text="⚠ bravo6, going dark ⚠")
+    print("⚠ bravo6, going dark ⚠")
     
     while True:
         p_start = time.time()
