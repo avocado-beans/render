@@ -14,7 +14,6 @@ bscscan_api = 'https://api.etherscan.io/api/'
 bscscan_api_key = os.environ['ETHCHAINAPI']
 bnbprice = 'ethprice'
 chain = 'ethereum'
-chain = 'bsc'
 
 if chain == 'bsc':
     wbnb_address = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
@@ -28,9 +27,9 @@ w3 = Web3(Web3.HTTPProvider(provider_url))
 print(w3.is_connected())
 TRANSFER_EVENT_SIGNATURE = w3.keccak(text='Transfer(address,address,uint256)').hex()
 
-back_stretch = 100
-front_limit = 0
-minutes = back_stretch / 20
+back_stretch = 1200
+front_limit = 1100
+minutes = (back_stretch-front_limit) / 20
 
 def get_image_url(lp_address):
     url = f'https://coinmarketcap.com/dexscan/{chain}/{lp_address}/'
@@ -186,29 +185,40 @@ def get_contract_wallet_txns(token_address, latest_block):
 
 async def func():
     bot = telegram.Bot(os.environ['TELEBOTAPI'])
-    await bot.sendMessage(chat_id='@th3k1ll3r', text="bravo 6, going dark")
-    print("bravo 6, going dark")
+    await bot.sendMessage(chat_id='@th3k1ll3r', text=f"target chain: {chain.lower()}")
+    time.sleep(5)
+    await bot.sendMessage(chat_id='@th3k1ll3r', text="bravo6, going dark")
+    print("bravo6, going dark")
     while True:
         p_start = time.time()
         latest_block = w3.eth.block_number
         print('\n***************************************')
-        print(f'checking what happened {back_stretch} blocks (~{back_stretch/1200}hrs) ago on {chain.upper()}...')
+        print(f'checking what happened (~{back_stretch/1200}hrs) ago on {chain.upper()}...')
         no_of_chunks = round(minutes/5)
-
+    
+        print(f'took {latest_block} as latest block')
+        hit_wall = False
         for i in range(no_of_chunks):
-            print(f'parsing chunk {i+1}: { latest_block - (back_stretch - 100*i)} to {latest_block - (back_stretch - 100*(i+1))}')
+            if back_stretch - 100*(i+1) < front_limit:
+                print('parsed through all data in provided time frame!')
+                print('exiting...')
+                hit_wall = True
+                break
+            print(f'parsing chunk {i+1}: { latest_block - (back_stretch - 100*i)} to { latest_block - (back_stretch - 100*(i+1))}')
             filter_params = {
-            'fromBlock': latest_block - (back_stretch - 100*i),
-                'toBlock': latest_block - (back_stretch - 100*(i+1)),
-                'topics': [TRANSFER_EVENT_SIGNATURE]
-            }
+                    'fromBlock': latest_block - (back_stretch - 100*i),
+                    'toBlock': latest_block - (back_stretch - 100*(i+1)),
+                    'topics': [TRANSFER_EVENT_SIGNATURE]
+                }
             logs = w3.eth.get_logs(filter_params)
             print('finished parsing chunk')
             if i == 0:
                 t_logs = logs
             elif i > 0:
                 t_logs += logs
-
+        if hit_wall:
+            time.sleep(60)
+            continue
         creations = {}
         print(f'Done parsing logs ({len(logs)}). now analyzing...')
         tokens = []
