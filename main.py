@@ -7,7 +7,6 @@ import asyncio
 import time
 import os
 
-
 wbnb_address = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
 bscusd_address = '0xdac17f958d2ee523a2206206994597c13d831ec7'
 provider_url = 'https://eth-pokt.nodies.app'
@@ -29,7 +28,7 @@ w3 = Web3(Web3.HTTPProvider(provider_url))
 print(w3.is_connected())
 TRANSFER_EVENT_SIGNATURE = w3.keccak(text='Transfer(address,address,uint256)').hex()
 
-back_stretch = 1200
+back_stretch = 100
 front_limit = 0
 minutes = back_stretch / 20
 
@@ -229,7 +228,7 @@ def main():
 
                     creations.update({f"{log['address']}": [int(log['blockNumber']), log['transactionHash'].hex()]})
                     tokens.append(log['address'])
-                    #print(log)
+
             except:
                 pass
 
@@ -302,7 +301,7 @@ def main():
                 time.sleep(1)
 
         print(f'Found {actual_creations} potential mooners from {len(creations)} subjects.')
-        knockout = 300
+        knockout = 60
         print(f'Finished search round in {round(time.time()-p_start)} seconds.')
         print(f'Taking a well deserved {round(knockout/60)}-minute break...')
         time.sleep(knockout)
@@ -310,16 +309,7 @@ def main():
 mainthread = threading.Thread(target=main,)
 mainthread.start()
 
-def side():
-    app = FastAPI()
-
-    @app.get("/")
-    async def confirm(request: Request):
-        return """My process is purely logistical, narrowly focused by design. I’m not here to take sides. It’s not my place to formulate any opinion. No one who can afford me needs to waste time winning me to some cause."""
-
-sidethread = threading.Thread(target=side,)
-sidethread.start()
-
-while True:
-    time.sleep(1)
-    pass
+app = FastAPI()
+@app.get("/")
+async def confirm(request: Request):
+    return """My process is purely logistical, narrowly focused by design. I’m not here to take sides. It’s not my place to formulate any opinion. No one who can afford me needs to waste time winning me to some cause."""
