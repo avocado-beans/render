@@ -27,17 +27,6 @@ w3 = Web3(Web3.HTTPProvider(provider_url))
 print(w3.is_connected())
 TRANSFER_EVENT_SIGNATURE = w3.keccak(text='Transfer(address,address,uint256)').hex()
 
-anchors = []
-for i in range(5):
-    anchors.append(w3.eth.block_number)
-    time.sleep(60)
-
-minutes = 5
-back_stretch_minutes = 60
-width = minutes*round(sum(anchors)/len(anchors))
-back_stretch = back_stretch_minutes*round(sum(anchors)/len(anchors))
-front_limit = back_stretch - width
-
 def get_image_url(lp_address):
     url = f'https://coinmarketcap.com/dexscan/{chain}/{lp_address}/'
     try:
@@ -131,7 +120,7 @@ def is_null(address, anchor):
         return True
     return False
 
-def get_contract_wallet_txns(token_address, latest_block):
+def get_contract_wallet_txns(token_address, latest_block, back_stretch):
     filter_params = {
 	'fromBlock': latest_block - back_stretch,
 	'toBlock': w3.eth.block_number,
@@ -193,12 +182,35 @@ def get_contract_wallet_txns(token_address, latest_block):
 async def func():
     bot = telegram.Bot(os.environ['TELEBOTAPI'])
     await bot.sendMessage(chat_id='@th3k1ll3r', text=f"target chain: {chain.lower()}")
-    time.sleep(5)
+    
+    anchors = []
+    for i in range(5):
+        anchors.append(w3.eth.block_number)
+        time.sleep(60)
+    
+    minutes = 5
+    back_stretch_minutes = 60
+    width = minutes*round(sum(anchors)/len(anchors))
+    back_stretch = back_stretch_minutes*round(sum(anchors)/len(anchors))
+    front_limit = back_stretch - width
+
+    tyme = 1
     await bot.sendMessage(chat_id='@th3k1ll3r', text="bravo6, going dark")
     print("bravo6, going dark")
+    
     while True:
         p_start = time.time()
+
         latest_block = w3.eth.block_number
+        anchors = anchors[-4:]
+        anchors.append(latest_block)
+
+        if tyme % 5 == 0:
+            width = minutes*round(sum(anchors)/len(anchors))
+            back_stretch = back_stretch_minutes*round(sum(anchors)/len(anchors))
+            front_limit = back_stretch - width
+            tyme-=tyme          
+
         print('\n***************************************')
         print(f'checking what happened (~{back_stretch/1200}hrs) ago on {chain.upper()}...')
         no_of_chunks = round(minutes/5)
@@ -207,8 +219,7 @@ async def func():
         hit_wall = False
         for i in range(no_of_chunks):
             if back_stretch - 100*(i+1) < front_limit:
-                print('parsed through all data in provided time frame!')
-                print('exiting...')
+                print('hit a wall')
                 hit_wall = True
                 break
             print(f'parsing chunk {i+1}: { latest_block - (back_stretch - 100*i)} to { latest_block - (back_stretch - 100*(i+1))}')
@@ -254,7 +265,7 @@ async def func():
         if len(creations) > 0:
             for token_address, tx_info in creations.items():
                 if is_creation_tx(token_address, tx_info):
-                    token_stats = get_contract_wallet_txns(token_address, latest_block)
+                    token_stats = get_contract_wallet_txns(token_address, latest_block, back_stretch)
                     if len(token_stats) > 0:
                         print(f'\n--------------------------------')
                         with open('record_book.txt', 'r') as f:
