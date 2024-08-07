@@ -128,7 +128,7 @@ def is_null(address, anchor):
 def get_contract_wallet_txns(token_address, latest_block):
     filter_params = {
 	'fromBlock': latest_block - back_stretch,
-	'toBlock': latest_block,
+	'toBlock': w3.eth.block_number,
 	'address': Web3.to_checksum_address(token_address),
 	'topics': [TRANSFER_EVENT_SIGNATURE]
     }
@@ -184,10 +184,10 @@ def get_contract_wallet_txns(token_address, latest_block):
     print(f'finished in {round(time.time()-start)} seconds')
     return(balance_book)
 
-def main():
+async def func():
     bot = telegram.Bot(os.environ['TELEBOTAPI'])
-    asyncio.run(bot.sendMessage(chat_id='@th3k1ll3r', text="bravo6, going dark"))
-    print("bravo6, going dark")
+    await bot.sendMessage(chat_id='@th3k1ll3r', text="bravo 6, going dark")
+    print("bravo 6, going dark")
     while True:
         p_start = time.time()
         latest_block = w3.eth.block_number
@@ -289,8 +289,8 @@ def main():
                                         print(f'Name: {token_name}')
                                         print(f'Symbol: {token_symbol}')
                                         for stat in token_stats:
-                                            asyncio.run(bot.sendMessage(chat_id='@th3k1ll3r', text=f"{token_symbol}: {stat['image_url']}"))
-                                            asyncio.run(bot.sendMessage(chat_id='@th3k1ll3r', text=f"current token price: {stat['relative_token_price']}\n\n(https://coinmarketcap.com/dexscan/{chain}/{stat['contract_wallet_address']})\n\n({bscscan_api.replace('api.','').replace('/api/', '')}/token/{token_address})"))
+                                            await bot.sendMessage(chat_id='@th3k1ll3r', text=f"{token_symbol}: {stat['image_url']}")
+                                            await bot.sendMessage(chat_id='@th3k1ll3r', text=f"current token price: {stat['relative_token_price']}\n\n(https://coinmarketcap.com/dexscan/{chain}/{stat['contract_wallet_address']})\n\n({bscscan_api.replace('api.','').replace('/api/', '')}/token/{token_address})")
                                         print('saved name and symbol')
                                     except:
                                         print('could not parse name and symbol...')
@@ -306,6 +306,9 @@ def main():
         print(f'Taking a well deserved {round(knockout/60)}-minute break...')
         time.sleep(knockout)
 
+def main():
+    asyncio.run(func())
+	
 mainthread = threading.Thread(target=main,)
 mainthread.start()
 
