@@ -195,8 +195,8 @@ async def func():
     front_limit = back_stretch - width
 
     tyme = 1
-    await bot.sendMessage(chat_id='@th3k1ll3r', text="bravo 6, going dark")
-    print("bravo 6, going dark")
+    await bot.sendMessage(chat_id='@th3k1ll3r', text="bravo6.. going dark")
+    print("bravo6.. going dark")
     
     while True:
         p_start = time.time()
@@ -212,7 +212,7 @@ async def func():
             tyme-=tyme          
 
         print('\n***************************************')
-        print(f'checking what happened (~{back_stretch/1200}hrs) ago on {chain.upper()}...')
+        print(f'checking what happened (~{back_stretch/(60*round(sum(anchors)/len(anchors)))}hrs) ago on {chain.upper()}...')
         no_of_chunks = round(minutes/5)
     
         print(f'took {latest_block} as latest block')
