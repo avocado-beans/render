@@ -20,7 +20,7 @@ w3 = Web3(Web3.HTTPProvider(provider_url))
 print(w3.is_connected())
 TRANSFER_EVENT_SIGNATURE = w3.keccak(text='Transfer(address,address,uint256)').hex()
 
-back_stretch = 1200
+back_stretch = 300
 front_limit = 0
 minutes = back_stretch / 20
 
