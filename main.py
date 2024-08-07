@@ -20,9 +20,9 @@ w3 = Web3(Web3.HTTPProvider(provider_url))
 print(w3.is_connected())
 TRANSFER_EVENT_SIGNATURE = w3.keccak(text='Transfer(address,address,uint256)').hex()
 
-back_stretch = 100
+back_stretch = 1200
 front_limit = 0
-minutes = 5
+minutes = back_stretch / 20
 
 def get_image_url(lp_address):
     url = f'https://coinmarketcap.com/dexscan/{chain}/{lp_address}/'
@@ -301,7 +301,7 @@ async def func():
                     time.sleep(1)
 
             print(f'Found {actual_creations} potential mooners from {len(creations)} subjects.')
-            knockout = back_stretch*3
+            knockout = (back_stretch*3)*0.75
             print(f'Taking a well deserved {round(knockout/60)}-minute break...')
             time.sleep(knockout)
 		
