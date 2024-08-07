@@ -38,7 +38,7 @@ def get_image_url(lp_address):
     url = f'https://coinmarketcap.com/dexscan/{chain}/{lp_address}/'
     try:
         response = requests.get(url)
-        img = response.text.split('class="dex-pairs-name"><img class="token-icon" src="')[1].split('" width="')[0]
+        img = response.text.split('class="dex-pairs-name"><img class="token-icon" src="')[1].split('" width="')[0].replace("?_=cff71a7","")
     except:
         img = 'https://s2.coinmarketcap.com/static/cloud/img/dex/default-icon-day-v3.svg'
     return img
