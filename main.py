@@ -303,7 +303,7 @@ async def func():
                     time.sleep(1)
 
             print(f'Found {actual_creations} potential mooners from {len(creations)} subjects.')
-            knockout = (back_stretch*3)*0.75
+            knockout = (back_stretch*3)*0.1
             print(f'Finished search round in {round(time.time()-p_start)} seconds.')
             print(f'Taking a well deserved {round(knockout/60)}-minute break...')
             time.sleep(knockout)
