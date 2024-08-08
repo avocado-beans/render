@@ -27,7 +27,7 @@ w3 = Web3(Web3.HTTPProvider(provider_url))
 print(w3.is_connected())
 TRANSFER_EVENT_SIGNATURE = w3.keccak(text='Transfer(address,address,uint256)').hex()
 
-blockspermin = 20
+blockspermin = 15
 minutes = 5
 back_stretch_minutes = 60
 width = minutes*blockspermin
@@ -303,8 +303,8 @@ async def func():
                                         print(f'Name: {token_name}')
                                         print(f'Symbol: {token_symbol}')
                                         for stat in token_stats:
-                                            sign = '☣️' if ('png' in stat['image_url']) else '⬛'
-                                            await bot.sendMessage(chat_id='@th3k1ll3r', text=f"{sign}{token_symbol}{sign}: {stat['image_url']}\ncurrent token price: {stat['relative_token_price']}\n\nLP info + price chart: https://coinmarketcap.com/dexscan/{chain}/{stat['contract_wallet_address']}\n\nchain explorer: {bscscan_api.replace('api.','').replace('/api/', '')}/token/{token_address}")
+                                            sign = '🚨' if ('png' in stat['image_url']) else '⬛'
+                                            await bot.sendMessage(chat_id='@th3k1ll3r', text=f"{sign} {token_symbol} {sign}: {stat['image_url']}\ncurrent token price: {stat['relative_token_price']}\n\nLP info + price chart: https://coinmarketcap.com/dexscan/{chain}/{stat['contract_wallet_address']}\n\nchain explorer: {bscscan_api.replace('api.','').replace('/api/', '')}/token/{token_address}")
                                         print('saved name and symbol')
                                     except:
                                         print('could not parse name and symbol...')
