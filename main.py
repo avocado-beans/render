@@ -228,7 +228,7 @@ async def func():
         tokens = []
         for log in t_logs:
             try:
-                value = int.from_bytes(log['data'], byteorder='big') / 10**18
+                value = int.from_bytes(log['data'], byteorder='big') / 10**9
                 zeroes = str(value).replace('.','').count('0')
                 sender_address = str(w3.to_hex(log['topics'][1]))
                 recipient_address = str(w3.to_hex(log['topics'][2]))
