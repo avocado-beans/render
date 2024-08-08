@@ -239,10 +239,11 @@ async def func():
                 sender_address = str(w3.to_hex(log['topics'][1]))
                 recipient_address = str(w3.to_hex(log['topics'][2]))
 
-                if is_null(sender_address, 'x') is True \
+               if is_null(sender_address, 'x') is True \
                     and is_null(recipient_address, 'x') is False \
-                    and value >= 10**6 \
-                    and not log['address'] in tokens:
+                    and (value / 10**9) >= 10**6 \
+                    and (not log['address'] in tokens) \
+                    and (not f'0x{recipient_address[26:]}' in ''.join(open('record_book.txt', 'r').readlines())):
                     if recipient_address[:26] == '0x000000000000000000000000' and len(recipient_address) > 60:
                         recipient_address = f'0x{recipient_address[26:]}'
 
@@ -261,8 +262,6 @@ async def func():
                     if len(token_stats) > 0:
                         print(f'\n--------------------------------')
                         with open('record_book.txt', 'r') as f:
-                            if token_address in ''.join(f.readlines()):
-                                print('token already in DB')
                             elif not token_address in ''.join(f.readlines()):
                                 actual_creations += 1
                                 with open('record_book.txt', 'a') as f_w:
