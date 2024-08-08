@@ -195,7 +195,7 @@ async def func():
     await bot.sendMessage(chat_id='@th3k1ll3r', text=f"code base modified\nrebooted to apply updates")
     time.sleep(10)
     await bot.sendMessage(chat_id='@th3k1ll3r', text=f"target chain: {chain.lower()}")
-    time.sleep(5)
+    time.sleep(2)
     await bot.sendMessage(chat_id='@th3k1ll3r', text="bravo6\ngoing dark")
     print("bravo6\ngoing dark")
     
@@ -320,10 +320,12 @@ async def func():
                         print(f'--------------------------------\n')
 
         print(f'Found {actual_creations} potential mooners from {len(creations)} subjects.')
-        knockout = 60
-        print(f'Finished search round in {round(time.time()-p_start)} seconds.')
-        print(f'Taking a well deserved {round(knockout/60)}-minute break...')
-        time.sleep(knockout)
+        absence = time.time()-p_start
+        print(f'Finished search round in {round(absence)} seconds.')
+        knockout = 300
+        if knockout - absence > 0:
+            print(f'Taking a well deserved {round((knockout - absence)/60)}-minute break...')
+            time.sleep(knockout - absence)
 
 def main():
     asyncio.run(func())
