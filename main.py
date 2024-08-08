@@ -188,7 +188,7 @@ def get_contract_wallet_txns(token_address, latest_block, back_stretch):
 
 async def func():
     bot = telegram.Bot(os.environ['TELEBOTAPI'])
-    await bot.sendMessage(chat_id='@th3k1ll3r', text=f"code base changed\nrebooted to apply updates")
+    await bot.sendMessage(chat_id='@th3k1ll3r', text=f"code base modified\nrebooted to apply updates")
     time.sleep(10)
     await bot.sendMessage(chat_id='@th3k1ll3r', text=f"target chain: {chain.lower()}")
     time.sleep(5)
