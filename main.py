@@ -314,7 +314,6 @@ async def func():
                                     f_w.close()
                             f.close()
                         print(f'--------------------------------\n')
-                time.sleep(1)
 
         print(f'Found {actual_creations} potential mooners from {len(creations)} subjects.')
         knockout = 60
