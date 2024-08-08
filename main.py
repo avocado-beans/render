@@ -27,7 +27,7 @@ w3 = Web3(Web3.HTTPProvider(provider_url))
 print(w3.is_connected())
 TRANSFER_EVENT_SIGNATURE = w3.keccak(text='Transfer(address,address,uint256)').hex()
 
-blockspermin = 15
+blockspermin = 20
 minutes = 5
 back_stretch_minutes = 60
 width = minutes*blockspermin
@@ -206,14 +206,14 @@ async def func():
         print(f'took {latest_block} as latest block')
         hit_wall = False
         for i in range(no_of_chunks):
-            if back_stretch - 100*(i+1) < front_limit:
+            if back_stretch - width*(i+1) < front_limit:
                 print('hit a wall')
                 hit_wall = True
                 break
-            print(f'parsing chunk {i+1}: { latest_block - (back_stretch - 100*i)} to { latest_block - (back_stretch - 100*(i+1))}')
+            print(f'parsing chunk {i+1}: { latest_block - (back_stretch - width*i)} to { latest_block - (back_stretch - width*(i+1))}')
             filter_params = {
-                    'fromBlock': latest_block - (back_stretch - 100*i),
-                    'toBlock': latest_block - (back_stretch - 100*(i+1)),
+                    'fromBlock': latest_block - (back_stretch - width*i),
+                    'toBlock': latest_block - (back_stretch - width*(i+1)),
                     'topics': [TRANSFER_EVENT_SIGNATURE]
                 }
             logs = w3.eth.get_logs(filter_params)
