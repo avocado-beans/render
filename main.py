@@ -69,7 +69,7 @@ def get_creator_address(token_address):
 def is_creation_tx(token_address, tx_info):
     start = time.time()
     is_creation = True if (get_creation_tx_hash(token_address) == tx_info[1]) else False
-    spare_time = 1 - (time.time()-start)
+    spare_time = 0.5 - (time.time()-start)
     if spare_time > 0:
         time.sleep(spare_time)
     return is_creation
