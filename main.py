@@ -340,12 +340,12 @@ async def func():
             time.sleep(knockout - absence)
 
 def main():
-    asyncio.run(func())
-	
+    asyncio.run(func())	
 mainthread = threading.Thread(target=main,)
-mainthread.start()
 
 app = FastAPI()
 @app.get("/")
 async def confirm(request: Request):
+    if not mainthread.is_alive():
+        mainthread.start()
     return """My process is purely logistical, narrowly focused by design. I’m not here to take sides. It’s not my place to formulate any opinion. No one who can afford me needs to waste time winning me to some cause."""
