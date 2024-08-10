@@ -34,6 +34,21 @@ width = minutes*blockspermin
 back_stretch = back_stretch_minutes*blockspermin
 front_limit = back_stretch - width
 
+def send_req(url, params):
+    RETRY = 0
+    while (RETRY < 3):
+        try:
+            start = time.time()
+            response = requests.get(url, params=params)
+            spare_time = 0.5 - (time.time()-start)
+            if spare_time > 0:
+                time.sleep(spare_time)
+            return response
+        except:
+            RETRY += 1
+            time.sleep(2)
+    return -1
+
 def get_image_url(lp_address):
     url = f'https://coinmarketcap.com/dexscan/{chain}/{lp_address}/'
     try:
@@ -50,7 +65,7 @@ def latest_bnb_price():
 	'action': bnbprice,
 	'apikey': bscscan_api_key,
     }
-    response = requests.get(url, params=params)
+    response = send_req(url, params)
     return float(response.json()['result']['ethusd'])
 
 def get_creator_address(token_address):
@@ -62,16 +77,13 @@ def get_creator_address(token_address):
 	'apikey': bscscan_api_key,
     }
 
-    response = requests.get(url, params=params)
+    response = send_req(url, params)
     print(response.json()['result'][0]['contractCreator'])
     return response.json()['result'][0]['contractCreator']
 
 def is_creation_tx(token_address, tx_info):
     start = time.time()
     is_creation = True if (get_creation_tx_hash(token_address) == tx_info[1]) else False
-    spare_time = 0.5 - (time.time()-start)
-    if spare_time > 0:
-        time.sleep(spare_time)
     return is_creation
 
 def get_creation_tx_hash(token_address):
@@ -82,7 +94,7 @@ def get_creation_tx_hash(token_address):
 	'contractaddresses': Web3.to_checksum_address(token_address),
 	'apikey': bscscan_api_key,
     }
-    response = requests.get(url, params=params)
+    response = send_req(url, params)
     return response.json()['result'][0]['txHash']
 
 def address_type(wallet_address):
@@ -100,7 +112,7 @@ def get_abi(token_address):
 	'address': Web3.to_checksum_address(token_address),
 	'apikey': bscscan_api_key,
     }
-    return requests.get(url, params=params).json()['result']
+    return send_req(url, params).json()['result']
 
 def get_balance(wallet_address, token_address):
     url = bscscan_api
@@ -112,7 +124,7 @@ def get_balance(wallet_address, token_address):
 	'tag': 'latest',
 	'apikey': bscscan_api_key,
     }
-    balance = requests.get(url, params=params).json()['result']
+    balance = send_req(url, params).json()['result']
     try:
         abi = get_abi(token_address)
         token = w3.eth.contract(address=Web3.to_checksum_address(token_address), abi=abi) # declaring the token contract
