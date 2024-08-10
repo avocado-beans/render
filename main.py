@@ -99,10 +99,8 @@ def get_creation_tx_hash(token_address):
 
 def address_type(wallet_address):
     code = str(w3.to_hex(w3.eth.get_code(Web3.to_checksum_address(wallet_address))))
-    if len(code) > 3:
-        return({'address_type': 'contract_address'})
-    elif len(code) <= 3:
-        return({'address_type': 'externally_owned_address'})
+    address_type = {'address_type': 'contract_address'} if (len(code) > 3) else {'address_type': 'externally_owned_address'}
+    return address_type
 
 def get_abi(token_address):
     url = bscscan_api
