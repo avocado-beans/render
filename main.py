@@ -276,61 +276,48 @@ async def func():
                 if is_creation_tx(token_address, tx_info):
                     token_stats = get_contract_wallet_txns(token_address, latest_block, back_stretch)
                     if len(token_stats) > 0:
-                        print(f'\n--------------------------------')
+                        print(f'\n--------------------------------\n')
                         actual_creations += 1
                         with open('record_book.txt', 'a') as f_w:
-                            f_w.write('Found token with potential\n')
-                            f_w.write(f'Token address: {token_address}\n')
-                            f_w.write(f'Created on block #{tx_info[0]}\n')
-                            for stat in token_stats:
-                                info_to_write = str(stat).replace("'", "")
-                                f_w.write(f'{info_to_write}\n')
-
-                            print('Found token with potential')
-                            print(f'Token address: {token_address}')
-                            print(f'Created on block #{tx_info[0]}\n')
-                            for stat in token_stats:
-                                info_to_write = str(stat).replace("'", "")
-                                print(f'{info_to_write}\n')
-
-                            try:
-                                print('trying to get name and symbol')
-                                abi = [{"inputs":[],
-                                "name":"name",
-                                "outputs":[{
-                                    "internalType":"string",
-                                    "name":"",
-                                    "type":"string"}],
-                                "stateMutability":"view",
-                                "type":"function"},
-                                {"inputs":[],
-                                "name":"symbol",
-                                "outputs":[{
-                                    "internalType":"string",
-                                    "name":"",
-                                    "type":"string"}],
-                                "stateMutability":"view",
-                                "type":"function"}]
-
-                                contract = w3.eth.contract(token_address , abi = abi)
-                                token_name = contract.functions.name().call()
-                                token_symbol = contract.functions.symbol().call()
-
-                                f_w.write(f'Name: {token_name}\n')
-                                f_w.write(f'Symbol: {token_symbol}\n')
-
-                                print(f'Name: {token_name}')
-                                print(f'Symbol: {token_symbol}')
-                                for stat in token_stats:
-                                    sign = '🚨' if ('png' in stat['image_url']) else '⬛'
-                                    await bot.sendMessage(chat_id='@th3k1ll3r', text=f"{sign} {token_symbol} {sign}: {stat['image_url']}\ncurrent token price: {stat['relative_token_price']}\n\nLP info + price chart: https://coinmarketcap.com/dexscan/{chain}/{stat['contract_wallet_address']}\n\nchain explorer: {bscscan_api.replace('api.','').replace('/api/', '')}/token/{token_address}")
-                                print('saved name and symbol')
-                            except:
-                                print('could not parse name and symbol...')
-                            f_w.write('\n')
+                            f_w.write(f'{token_address}, \n')
                             f_w.close()
-                        print(f'--------------------------------\n')
+                        print('Found token with potential')
+                        print(f'Token address: {token_address}')
+                        print(f'Created on block #{tx_info[0]}\n')
+                        for stat in token_stats:
+                            info_to_write = str(stat).replace("'", "")
+                            print(f'{info_to_write}\n')
+                        try:
+                            print('trying to get name and symbol')
+                            abi = [{"inputs":[],
+                            "name":"name",
+                            "outputs":[{
+                                "internalType":"string",
+                                "name":"",
+                                "type":"string"}],
+                            "stateMutability":"view",
+                            "type":"function"},
+                            {"inputs":[],
+                            "name":"symbol",
+                            "outputs":[{
+                                "internalType":"string",
+                                "name":"",
+                                "type":"string"}],
+                            "stateMutability":"view",
+                            "type":"function"}]
 
+                            contract = w3.eth.contract(token_address , abi = abi)
+                            token_name = contract.functions.name().call()
+                            token_symbol = contract.functions.symbol().call()
+
+                            print(f'Name: {token_name}')
+                            print(f'Symbol: {token_symbol}')
+                            for stat in token_stats:
+                                sign = '🚨' if ('png' in stat['image_url']) else '⬛'
+                                await bot.sendMessage(chat_id='@th3k1ll3r', text=f"{sign} {token_symbol} {sign}: {stat['image_url']}\ncurrent token price: {stat['relative_token_price']}\n\nLP info + price chart: https://coinmarketcap.com/dexscan/{chain}/{stat['contract_wallet_address']}\n\nchain explorer: {bscscan_api.replace('api.','').replace('/api/', '')}/token/{token_address}")
+                        except:
+                            print('could not parse name and symbol...')
+                        print(f'\n--------------------------------\n')
         print(f'Found {actual_creations} potential mooners from {len(creations)} subjects.')
         absence = time.time()-p_start
         print(f'Finished search round in {round(absence)} seconds.')
