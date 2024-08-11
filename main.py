@@ -339,7 +339,6 @@ def get_contract_wallet_txns(token_address, latest_block, back_stretch):
     return(balance_book)
 	
 def main():
-    time.sleep(600)
     while True:
         try:
             asyncio.run(func())
