@@ -219,19 +219,6 @@ def latest_bnb_price():
     response = send_req(url, params)
     return float(response.json()['result']['ethusd'])
 
-def get_creator_address(token_address):
-    url = bscscan_api
-    params = {
-	'module': 'contract',
-	'action': 'getcontractcreation',
-	'contractaddresses': Web3.to_checksum_address(token_address),
-	'apikey': bscscan_api_key,
-    }
-
-    response = send_req(url, params)
-    print(response.json()['result'][0]['contractCreator'])
-    return response.json()['result'][0]['contractCreator']
-
 def is_creation_tx(token_address, tx_info):
     start = time.time()
     is_creation = True if (get_creation_tx_hash(token_address) == tx_info[1]) else False
@@ -246,7 +233,12 @@ def get_creation_tx_hash(token_address):
 	'apikey': bscscan_api_key,
     }
     response = send_req(url, params)
-    return response.json()['result'][0]['txHash']
+    try:
+        return response.json()['result'][0]['txHash']
+    except:
+        print('encountered creation tx exception')
+        print(traceback.format_exc())
+        return '0x0'
 
 def address_type(wallet_address):
     code = str(w3.to_hex(w3.eth.get_code(Web3.to_checksum_address(wallet_address))))
