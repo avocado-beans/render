@@ -171,7 +171,7 @@ def lockedburned(lp_address, from_block):
     uncx = '0x663a5c229c09b049e36dcc11a9b0d4a8eb9db214'
     teamfinance = '0xe2fe530c047f2d85298b07d9333c05737f1435fb'
     pinklock = '0x71b5759d73262fbb223956913ecf4ecc51057641'
-    lockersburners = [burner, uncx, teamfinance, pinklock]
+    lockersburners = [uncx, teamfinance, pinklock]
 
     logs = logs[:100]
     for log in logs:
