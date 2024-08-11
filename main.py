@@ -239,6 +239,7 @@ def get_creation_tx_hash(token_address):
         print(f'encountered creation tx exception: {token_address}')
         print(traceback.format_exc())
         print(response.json())
+        time.sleep(300)
         return '0x0'
 
 def address_type(wallet_address):
