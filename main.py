@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request
 from web3 import Web3
 import threading
+import traceback
 import requests
 import telegram
 import asyncio
@@ -356,7 +357,7 @@ def main():
         try:
             asyncio.run(func())
         except:
-            print('EXCEPTION')
+            print(traceback.format_exc())
             time.sleep(60)
 		
 mainthread = threading.Thread(target=main,)
