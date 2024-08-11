@@ -23,10 +23,6 @@ if chain == 'bsc':
     bscscan_api_key = os.environ['BSCCHAINAPI']
     bnbprice = 'bnbprice'
 
-w3 = Web3(Web3.HTTPProvider(provider_url))
-print(w3.is_connected())
-TRANSFER_EVENT_SIGNATURE = w3.keccak(text='Transfer(address,address,uint256)').hex()
-
 blockspermin = 20
 minutes = 5
 back_stretch_minutes = 60
