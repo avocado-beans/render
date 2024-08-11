@@ -146,8 +146,8 @@ async def func():
                             print(f'Name: {token_name}')
                             print(f'Symbol: {token_symbol}')
                             for stat in token_stats:
-                                sign = '🚨' if ('png' in stat['image_url']) else '⬛'
-                                await bot.sendMessage(chat_id='@th3k1ll3r', text=f"{sign} {token_symbol} {sign}: {stat['image_url']}\ncurrent token price: {stat['relative_token_price']}\n\nLP info + price chart: https://coinmarketcap.com/dexscan/{chain}/{stat['contract_wallet_address']}\n\nchain explorer: {bscscan_api.replace('api.','').replace('/api/', '')}/token/{token_address}")
+                                sign = '🚨' if (bool(stat['is_locked'])) else '⬛'
+                                await bot.sendMessage(chat_id='@th3k1ll3r', text=f"{sign} {token_symbol} {sign}\ncurrent token price: {stat['relative_token_price']}\n\nLP info + price chart: https://coinmarketcap.com/dexscan/{chain}/{stat['contract_wallet_address']}\n\nchain explorer: {bscscan_api.replace('api.','').replace('/api/', '')}/token/{token_address}")
                         except:
                             print('could not parse name and symbol...')
                         print(f'\n--------------------------------\n')
@@ -158,6 +158,31 @@ async def func():
         if knockout - absence > 0:
             print(f'Taking a well deserved {round((knockout - absence)/60)}-minute break...')
             time.sleep(knockout - absence)
+
+def lockedburned(lp_address, from_block):
+    filter_params = {
+	'fromBlock': from_block,
+	'toBlock': w3.eth.block_number,
+	'address': Web3.to_checksum_address(lp_address),
+	'topics': [TRANSFER_EVENT_SIGNATURE]}
+    logs = w3.eth.get_logs(filter_params)
+
+    burner = '0x000000000000000000000000000000000000dead'
+    uncx = '0x663a5c229c09b049e36dcc11a9b0d4a8eb9db214'
+    teamfinance = '0xe2fe530c047f2d85298b07d9333c05737f1435fb'
+    pinklock = '0x71b5759d73262fbb223956913ecf4ecc51057641'
+    lockersburners = [burner, uncx, teamfinance, pinklock]
+
+    logs = logs[:100]
+    for log in logs:
+        sender_address = str(w3.to_hex(log['topics'][1]))
+        recipient_address = str(w3.to_hex(log['topics'][2]))
+
+        for address in [sender_address, recipient_address]:
+            address = f'0x{address[26:]}'
+            if address in lockersburners:
+                return True
+    return False
 
 def send_req(url, params):
     RETRY = 0
@@ -290,6 +315,7 @@ def get_contract_wallet_txns(token_address, latest_block, back_stretch):
         recipient_address = str(w3.to_hex(log['topics'][2]))
         null_state_sender = is_null(sender_address, 'x')
         null_state_recipient = is_null(recipient_address, 'x')
+        blockNum = int(log['blockNumber'])
         if null_state_sender is False \
             and null_state_recipient is False:
             for address in [sender_address, recipient_address]:
@@ -301,8 +327,8 @@ def get_contract_wallet_txns(token_address, latest_block, back_stretch):
                     token_balance = get_balance(address, token_address)
 
                     if ((wbnb_balance > 1 and usd_balance == 0.0) or (usd_balance > 1000 and wbnb_balance == 0.0)) and (token_balance > 1):
-                        image_url = get_image_url(address)
-                        if True:#('png' in image_url):
+                        is_locked = lockedburned(address, blockNum)
+                        if True:
                             print('audited one possible LP')
                             if (wbnb_balance > 1):
                                 relative_token_price = (wbnb_balance*latest_bnb_price())/token_balance
@@ -315,7 +341,7 @@ def get_contract_wallet_txns(token_address, latest_block, back_stretch):
                                 f'token_balance': token_balance,
                                 f'wbnb_balance': wbnb_balance,
                                 f'bsc-usd_balance': usd_balance,
-                                f'image_url': image_url
+                                f'is_locked': is_locked
                                 }
 
                             balance_book.append(response)
