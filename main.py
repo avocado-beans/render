@@ -8,8 +8,6 @@ import asyncio
 import time
 import os
 
-time.sleep(600)
-
 wbnb_address = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
 bscusd_address = '0xdac17f958d2ee523a2206206994597c13d831ec7'
 provider_url = 'https://eth-pokt.nodies.app'
@@ -349,6 +347,7 @@ def get_contract_wallet_txns(token_address, latest_block, back_stretch):
     return(balance_book)
 	
 def main():
+    time.sleep(600)
     while True:
         try:
             asyncio.run(func())
