@@ -328,7 +328,7 @@ def get_contract_wallet_txns(token_address, latest_block, back_stretch):
 def main():
     while True:
         try:
-            asyncio.run(count())
+            asyncio.run(func())
         except:
             print('EXCEPTION')
             time.sleep(60)
