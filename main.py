@@ -236,7 +236,7 @@ def get_creation_tx_hash(token_address):
     try:
         return response.json()['result'][0]['txHash']
     except:
-        print('encountered creation tx exception')
+        print(f'encountered creation tx exception: {token_address}')
         print(traceback.format_exc())
         return '0x0'
 
