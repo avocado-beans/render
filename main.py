@@ -16,14 +16,6 @@ bscscan_api_key = os.environ['ETHCHAINAPI']
 bnbprice = 'ethprice'
 chain = 'ethereum'
 
-if chain == 'bsc':
-    wbnb_address = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
-    bscusd_address = '0x55d398326f99059ff775485246999027b3197955'
-    provider_url = 'https://bsc-pokt.nodies.app'
-    bscscan_api = 'https://api.bscscan.com/api/'
-    bscscan_api_key = os.environ['BSCCHAINAPI']
-    bnbprice = 'bnbprice'
-
 blockspermin = 20
 minutes = 5
 back_stretch_minutes = 60
