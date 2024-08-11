@@ -23,6 +23,68 @@ width = minutes*blockspermin
 back_stretch = back_stretch_minutes*blockspermin
 front_limit = back_stretch - width
 
+def latest_bnb_price():
+    url = bscscan_api
+    params = {
+	'module': 'stats',
+	'action': bnbprice,
+	'apikey': bscscan_api_key,
+    }
+    response = requests.get(url, params=params)
+    return float(response.json()['result']['ethusd'])
+
+def get_creation_tx_hash(token_address):
+    url = bscscan_api
+    params = {
+	'module': 'contract',
+	'action': 'getcontractcreation',
+	'contractaddresses': Web3.to_checksum_address(token_address),
+	'apikey': bscscan_api_key,
+    }
+    response = requests.get(url, params=params)
+    try:
+        return response.json()['result'][0]['txHash']
+    except:
+        print(f'encountered creation tx exception: {token_address}')
+        print(traceback.format_exc())
+        print(response.json())
+        time.sleep(300)
+        return '0x0'
+
+def get_abi(token_address):
+    url = bscscan_api
+    params = {
+	'module': 'contract',
+	'action': 'getabi',
+	'address': Web3.to_checksum_address(token_address),
+	'apikey': bscscan_api_key,
+    }
+    return requests.get(url, params=params).json()['result']
+
+def get_balance(wallet_address, token_address):
+    url = bscscan_api
+    params = {
+	'module': 'account',
+	'action': 'tokenbalance',
+	'contractaddress': token_address,
+	'address': Web3.to_checksum_address(wallet_address),
+	'tag': 'latest',
+	'apikey': bscscan_api_key,
+    }
+    balance = requests.get(url, params=params).json()['result']
+    try:
+        abi = get_abi(token_address)
+        token = w3.eth.contract(address=Web3.to_checksum_address(token_address), abi=abi) # declaring the token contract
+        try:
+            decimals = int(token.functions.decimals().call())
+        except:
+            decimals = 18
+
+        return int(balance)/(10**decimals)
+
+    except:
+        return -1
+
 async def func():
     global w3
     global TRANSFER_EVENT_SIGNATURE
@@ -201,78 +263,16 @@ def get_image_url(lp_address):
         img = 'https://s2.coinmarketcap.com/static/cloud/img/dex/default-icon-day-v3.svg'
     return img
 
-def latest_bnb_price():
-    url = bscscan_api
-    params = {
-	'module': 'stats',
-	'action': bnbprice,
-	'apikey': bscscan_api_key,
-    }
-    response = send_req(url, params)
-    return float(response.json()['result']['ethusd'])
-
 def is_creation_tx(token_address, tx_info):
     start = time.time()
     is_creation = True if (get_creation_tx_hash(token_address) == tx_info[1]) else False
     return is_creation
-
-def get_creation_tx_hash(token_address):
-    url = bscscan_api
-    params = {
-	'module': 'contract',
-	'action': 'getcontractcreation',
-	'contractaddresses': Web3.to_checksum_address(token_address),
-	'apikey': bscscan_api_key,
-    }
-    response = send_req(url, params)
-    try:
-        return response.json()['result'][0]['txHash']
-    except:
-        print(f'encountered creation tx exception: {token_address}')
-        print(traceback.format_exc())
-        print(response.json())
-        time.sleep(300)
-        return '0x0'
-
+	
 def address_type(wallet_address):
     code = str(w3.to_hex(w3.eth.get_code(Web3.to_checksum_address(wallet_address))))
     address_type = {'address_type': 'contract_address'} if (len(code) > 3) else {'address_type': 'externally_owned_address'}
     return address_type
-
-def get_abi(token_address):
-    url = bscscan_api
-    params = {
-	'module': 'contract',
-	'action': 'getabi',
-	'address': Web3.to_checksum_address(token_address),
-	'apikey': bscscan_api_key,
-    }
-    return send_req(url, params).json()['result']
-
-def get_balance(wallet_address, token_address):
-    url = bscscan_api
-    params = {
-	'module': 'account',
-	'action': 'tokenbalance',
-	'contractaddress': token_address,
-	'address': Web3.to_checksum_address(wallet_address),
-	'tag': 'latest',
-	'apikey': bscscan_api_key,
-    }
-    balance = send_req(url, params).json()['result']
-    try:
-        abi = get_abi(token_address)
-        token = w3.eth.contract(address=Web3.to_checksum_address(token_address), abi=abi) # declaring the token contract
-        try:
-            decimals = int(token.functions.decimals().call())
-        except:
-            decimals = 18
-
-        return int(balance)/(10**decimals)
-
-    except:
-        return -1
-
+	
 def is_null(address, anchor):
     if (len(address.replace(anchor, '')) == address.replace(anchor, '').count('0')):
         return True
@@ -339,7 +339,7 @@ def get_contract_wallet_txns(token_address, latest_block, back_stretch):
     return(balance_book)
 	
 def main():
-    while True:
+    if True:
         try:
             asyncio.run(func())
         except:
