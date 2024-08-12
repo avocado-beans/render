@@ -221,7 +221,7 @@ def msg_construct(token_address, stat):
     lp_addressHL = f"{bscscan_api.replace('api.','').replace('/api/', '')}/token/{stat['contract_wallet_address']}"
     cmcHL = f"https://coinmarketcap.com/dexscan/{chain}/{stat['contract_wallet_address']}"
 
-    text = f"Current Price: [{stat['relative_token_price']}]({cmcHL})\nToken Address: [{token_address}]({token_addressHL})\nLP Address: [{stat['contract_wallet_address']}]({lp_addressHL})\n"
+    text = f"Current Price: [{stat['relative_token_price'].replace('.', '\\.')}]({cmcHL})\nToken Address: [{token_address}]({token_addressHL})\nLP Address: [{stat['contract_wallet_address']}]({lp_addressHL})\n"
     return text
 	
 def lockedburned(lp_address, from_block):
