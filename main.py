@@ -335,7 +335,7 @@ def get_contract_wallet_txns(token_address, latest_block, back_stretch):
 
                             response ={
                                 f'contract_wallet_address': address,
-                                f'relative_token_price': f'${relative_token_price}',
+                                f'relative_token_price': f'${round(relative_token_price, 4)}',
                                 f'token_balance': token_balance,
                                 f'wbnb_balance': wbnb_balance,
                                 f'bsc-usd_balance': usd_balance,
