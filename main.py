@@ -217,9 +217,9 @@ async def func():
             time.sleep(knockout - absence)
 
 def msg_construct(token_address, stat):
-    text = f"current token price: [{stat['relative_token_price']}](https://coinmarketcap.com/dexscan/{chain}/{stat['contract_wallet_address']})\n\ntoken address: [{token_address}]({bscscan_api.replace('api.','').replace('/api/', '')}/token/{token_address})\n\nliquidity pool address: [{stat['contract_wallet_address']}]({bscscan_api.replace('api.','').replace('/api/', '')}/token/{stat['contract_wallet_address']})"
-    return text.replace(".", "\\.")
-
+    text = f"current token price: [{stat['relative_token_price'].replace(".", "\\.")}](https://coinmarketcap.com/dexscan/{chain}/{stat['contract_wallet_address']})\n\ntoken address: [{token_address}]({bscscan_api.replace('api.','').replace('/api/', '')}/token/{token_address})\n\nliquidity pool address: [{stat['contract_wallet_address']}]({bscscan_api.replace('api.','').replace('/api/', '')}/token/{stat['contract_wallet_address']})"
+    return text
+	
 def lockedburned(lp_address, from_block):
     filter_params = {
 	'fromBlock': from_block,
