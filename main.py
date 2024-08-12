@@ -221,7 +221,7 @@ def msg_construct(token_address, stat):
     lp_addressHL = f"{bscscan_api.replace('api.','').replace('/api/', '')}/token/{stat['contract_wallet_address']}"
     cmcHL = f"https://coinmarketcap.com/dexscan/{chain}/{stat['contract_wallet_address']}"
     price = stat['relative_token_price']
-    price = round(float(price[:price.index('e')]), 4) if ('e' in price) else round(float(price), 4)
+    price = (str(round(float(price[:price.index('e')]), 4))+price[price.index('e'):]) if ('e' in price) else round(float(price), 4)
     price = price.replace('.', '\\.').replace('e', ' x 10^').replace('-0', '-').replace('-', '\\-')+' USD'
 	
     text = f"Current Price: [{price}]({cmcHL})\nToken Address: [{token_address}]({token_addressHL})\nLP Address: [{stat['contract_wallet_address']}]({lp_addressHL})\n"
@@ -337,7 +337,7 @@ def get_contract_wallet_txns(token_address, latest_block, back_stretch):
 
                             response ={
                                 f'contract_wallet_address': address,
-                                f'relative_token_price': relative_token_price,
+                                f'relative_token_price': str(relative_token_price),
                                 f'token_balance': token_balance,
                                 f'wbnb_balance': wbnb_balance,
                                 f'bsc-usd_balance': usd_balance,
