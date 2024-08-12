@@ -205,6 +205,7 @@ async def func():
                                 text = msg_construct(token_address, stat)
                                 message = (await bot.sendMessage(chat_id=chat_id, text=f"🟢{token_symbol}🟢\n{text}", parse_mode = 'MarkdownV2')) if (bool(stat['is_locked'])) else (await bot.sendMessage(chat_id=chat_id, text=f"⚠{token_symbol}⚠\n{text}", parse_mode = 'MarkdownV2'))
                         except:
+                            print(traceback.format_exc())
                             print('could not parse name and symbol...')
                         print(f'\n--------------------------------\n')
         print(f'Found {actual_creations} potential mooners from {len(creations)} subjects.')
