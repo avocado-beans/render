@@ -203,7 +203,7 @@ async def func():
                             print(f'Symbol: {token_symbol}')
                             for stat in token_stats:
                                 text = msg_construct(token_address, stat)
-                                message = (await bot.sendMessage(chat_id=chat_id, text=f"🟢{token_symbol}🟢\n{text}", parse_mode = 'MarkdownV2')) if (bool(stat['is_locked'])) else (await bot.sendMessage(chat_id=chat_id, text=f"⚠{token_symbol}⚠\n{text}", parse_mode = 'MarkdownV2'))
+                                message = (await bot.sendMessage(chat_id=chat_id, text=f"🟢{token_symbol}🟢\n\n{text}", parse_mode = 'MarkdownV2')) if (bool(stat['is_locked'])) else (await bot.sendMessage(chat_id=chat_id, text=f"⚠{token_symbol}⚠\n\n{text}", parse_mode = 'MarkdownV2'))
                         except:
                             print(traceback.format_exc())
                             print('could not parse name and symbol...')
@@ -217,7 +217,7 @@ async def func():
             time.sleep(knockout - absence)
 
 def msg_construct(token_address, stat):
-    text = f"current token price: {stat['relative_token_price']}\n\ntoken address: [{token_address}]({bscscan_api.replace('api.','').replace('/api/', '')}/token/{token_address})\n\nliquidity pool address: [{stat['contract_wallet_address']}](https://coinmarketcap.com/dexscan/{chain}/{stat['contract_wallet_address']})"
+    text = f"current token price: [{stat['relative_token_price']}](https://coinmarketcap.com/dexscan/{chain}/{stat['contract_wallet_address']})\n\ntoken address: [{token_address}]({bscscan_api.replace('api.','').replace('/api/', '')}/token/{token_address})\n\nliquidity pool address: [{stat['contract_wallet_address']}]({bscscan_api.replace('api.','').replace('/api/', '')}/token/{stat['contract_wallet_address']})"
     return text.replace(".", "\\.")
 
 def lockedburned(lp_address, from_block):
