@@ -15,6 +15,7 @@ bscscan_api = 'https://api.etherscan.io/api/'
 bscscan_api_key = str(os.environ['ETHCHAINAPI'])
 bnbprice = 'ethprice'
 chain = 'ethereum'
+chat_id = '-2202797804'
 
 blockspermin = 20
 minutes = 5
@@ -93,11 +94,11 @@ async def func():
     TRANSFER_EVENT_SIGNATURE = w3.keccak(text='Transfer(address,address,uint256)').hex()
 
     bot = telegram.Bot(os.environ['TELEBOTAPI'])
-    await bot.sendMessage(chat_id='@th3k1ll3r', text=f"code base modified\nrebooted to apply updates")
+    await bot.sendMessage(chat_id=chat_id, text=f"code base modified\nrebooted to apply updates")
     time.sleep(10)
-    await bot.sendMessage(chat_id='@th3k1ll3r', text=f"target chain: {chain.lower()}")
+    await bot.sendMessage(chat_id=chat_id, text=f"target chain: {chain.lower()}")
     time.sleep(2)
-    await bot.sendMessage(chat_id='@th3k1ll3r', text="bravo6\ngoing dark")
+    await bot.sendMessage(chat_id=chat_id, text="bravo6\ngoing dark")
     print("bravo6\ngoing dark")
 
     while True:
@@ -202,7 +203,7 @@ async def func():
                             print(f'Symbol: {token_symbol}')
                             for stat in token_stats:
                                 text = msg_construct(token_address, stat)
-                                message = (await bot.sendMessage(chat_id='@th3k1ll3r', text=f"🟢{token_symbol}🟢\n{text}")) if (bool(stat['is_locked'])) else (await bot.sendMessage(chat_id='@th3k1ll3r', text=f"⚠{token_symbol}⚠\n{text}"))
+                                message = (await bot.sendMessage(chat_id=chat_id, text=f"🟢{token_symbol}🟢\n{text}")) if (bool(stat['is_locked'])) else (await bot.sendMessage(chat_id=chat_id, text=f"⚠{token_symbol}⚠\n{text}"))
                         except:
                             print('could not parse name and symbol...')
                         print(f'\n--------------------------------\n')
