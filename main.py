@@ -259,14 +259,14 @@ def send_req(url, params):
             time.sleep(2)
     return -1
 
-def get_image_url(lp_address):
+def is_lpage(lp_address):
     url = f'https://coinmarketcap.com/dexscan/{chain}/{lp_address}/'
     try:
         response = requests.get(url)
-        img = response.text.split('class="dex-pairs-name"><img class="token-icon" src="')[1].split('" width="')[0].replace("?_=cff71a7","")
+        img = response.text.split('class="dex-pairs-name"><img class="token-icon" src="')[1].split('" width="')[0]
+        return True
     except:
-        img = 'https://s2.coinmarketcap.com/static/cloud/img/dex/default-icon-day-v3.svg'
-    return img
+        return False
 
 def is_creation_tx(token_address, tx_info):
     start = time.time()
@@ -319,8 +319,8 @@ def get_contract_wallet_txns(token_address, latest_block, back_stretch):
                     token_balance = get_balance(address, token_address)
 
                     if ((wbnb_balance > 1 and usd_balance == 0.0) or (usd_balance > 1000 and wbnb_balance == 0.0)) and (token_balance > 1):
-                        is_locked = lockedburned(address, blockNum)
-                        if True:
+                        if is_lpage(address):
+                            is_locked = lockedburned(address, blockNum)
                             print('audited one possible LP')
                             if (wbnb_balance > 1):
                                 relative_token_price = (wbnb_balance*latest_bnb_price())/token_balance
