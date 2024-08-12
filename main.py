@@ -15,7 +15,7 @@ bscscan_api = 'https://api.etherscan.io/api/'
 bscscan_api_key = str(os.environ['ETHCHAINAPI'])
 bnbprice = 'ethprice'
 chain = 'ethereum'
-chat_id = '-1002202797804'
+chat_id = '-1002184767994'
 
 blockspermin = 20
 minutes = 5
