@@ -202,7 +202,7 @@ async def func():
                             print(f'Symbol: {token_symbol}')
                             for stat in token_stats:
                                 text = msg_construct(token_address, stat)
-                                message = (await bot.sendMessage(chat_id='@th3k1ll3r', text=f"🚨{token_symbol}🚨\n{text}")) if (bool(stat['is_locked'])) else (await bot.sendMessage(chat_id='@th3k1ll3r', text=f"⬛{token_symbol}⬛\n{text}"))
+                                message = (await bot.sendMessage(chat_id='@th3k1ll3r', text=f"🟢{token_symbol}🟢\n{text}")) if (bool(stat['is_locked'])) else (await bot.sendMessage(chat_id='@th3k1ll3r', text=f"⚠{token_symbol}⚠\n{text}"))
                         except:
                             print('could not parse name and symbol...')
                         print(f'\n--------------------------------\n')
