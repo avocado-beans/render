@@ -220,7 +220,10 @@ def msg_construct(token_address, stat):
     token_addressHL = f"{bscscan_api.replace('api.','').replace('/api/', '')}/token/{token_address}"
     lp_addressHL = f"{bscscan_api.replace('api.','').replace('/api/', '')}/token/{stat['contract_wallet_address']}"
     cmcHL = f"https://coinmarketcap.com/dexscan/{chain}/{stat['contract_wallet_address']}"
-    text = f"current token price: [{stat['relative_token_price'].replace(".", "\\.")}]({cmcHL})\n\ntoken address: [{token_address}]({token_addressHL})\n\nliquidity pool address: [{stat['contract_wallet_address']}]({lp_addressHL})"
+
+    text = f"current price: [{stat['relative_token_price']}]({cmcHL})\n"
+    text += f"token address: [{token_address}]({token_addressHL})\n"
+    text += f"liquidity pool address: [{stat['contract_wallet_address']}]({lp_addressHL})\n"
     return text
 	
 def lockedburned(lp_address, from_block):
