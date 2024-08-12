@@ -221,6 +221,7 @@ def msg_construct(token_address, stat):
     lp_addressHL = f"{bscscan_api.replace('api.','').replace('/api/', '')}/token/{stat['contract_wallet_address']}"
     cmcHL = f"https://coinmarketcap.com/dexscan/{chain}/{stat['contract_wallet_address']}"
     price = stat['relative_token_price']
+    price = str(round(float(price[:price.index('e')]), 4)) + price[price.index('e'):]
     price = '$'+price.replace('.', '\\.').replace('e', ' x 10^').replace('-0', '-').replace('-', '\\-')
 	
     text = f"Current Price: [{price}]({cmcHL})\nToken Address: [{token_address}]({token_addressHL})\nLP Address: [{stat['contract_wallet_address']}]({lp_addressHL})\n"
