@@ -159,7 +159,9 @@ async def search_for_creations():
                 print(text)
                 send_message = (await bot.sendMessage(chat_id=chat_id, text=text, parse_mode = 'MarkdownV2')) if (is_locked) else False
 		    
-        tokens.clear()
+        for token in tokens:
+            if (len(tokens)>0) and (not token in temp_tokens):
+                tokens.remove(token)
         tokens.extend(temp_tokens)
 	    
         absence = time.time()-p_start
