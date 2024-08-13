@@ -89,7 +89,7 @@ def get_balance(wallet_address, token_address):
 async def func():
     global w3
     global TRANSFER_EVENT_SIGNATURE
-    w3 = Web3(Web3.HTTPProvider(provider_url))
+    w3 = Web3(Web3.HTTPProvider(provider_url, request_kwargs={'timeout': 60}))
     print(w3.is_connected())
     TRANSFER_EVENT_SIGNATURE = w3.keccak(text='Transfer(address,address,uint256)').hex()
 
