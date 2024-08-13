@@ -13,17 +13,11 @@ scannerkey = os.environ['ETHCHAINAPI']
 provider_url = f'https://mainnet.infura.io/v3/{os.environ['INFURAKEY']}'
 abi = [{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"}]
 
-w3 = Web3(Web3.HTTPProvider(provider_url, request_kwargs={'timeout': 60}))
-print(w3.is_connected())
-
 blockspermin = 20
 minutes = 5
 back_stretch_minutes = 60
 width = minutes*blockspermin
 back_stretch = back_stretch_minutes*blockspermin
-
-TRANSFER_EVENT_SIGNATURE = w3.keccak(text='Transfer(address,address,uint256)').hex()
-CREATION_EVENT_SIGNATURE = w3.keccak(text='PairCreated(address,address,address,uint256)').hex()
 
 def latest_eth_price():
     url = 'https://api.etherscan.io/api/'
@@ -113,12 +107,19 @@ def latest_token_price(token_address, counter_address, pair_address):
     return 0
 
 async def start_up(bot):
+    global w3
+    global TRANSFER_EVENT_SIGNATURE
+    global CREATION_EVENT_SIGNATURE
+    w3 = Web3(Web3.HTTPProvider(provider_url, request_kwargs={'timeout': 60}))
+    TRANSFER_EVENT_SIGNATURE = w3.keccak(text='Transfer(address,address,uint256)').hex()
+    CREATION_EVENT_SIGNATURE = w3.keccak(text='PairCreated(address,address,address,uint256)').hex()
+
     await bot.sendMessage(chat_id=chat_id, text=f"Codebase Modified\nRebooted to Apply Updates")
     time.sleep(10)
-    await bot.sendMessage(chat_id=chat_id, text=f"Target Chain: {chain.lower()}")
+    await bot.sendMessage(chat_id=chat_id, text=f"Target Chain: {chain.upper()}")
     time.sleep(2)
     await bot.sendMessage(chat_id=chat_id, text="Bravo Six, Going Dark")
-    print("bravo6\ngoing dark")
+    print("Bravo Six, Going Dark")
 
 async def search_for_creations(bot, from_block, to_block):
     filter_params = {
