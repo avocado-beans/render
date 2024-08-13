@@ -19,6 +19,7 @@ back_stretch_minutes = 60
 width = minutes*blockspermin
 back_stretch = back_stretch_minutes*blockspermin
 
+tokens = []
 def latest_eth_price():
     url = 'https://api.etherscan.io/api/'
     params = {
@@ -52,7 +53,7 @@ def locked(pair_address, from_block):
     uncx = '0x663a5c229c09b049e36dcc11a9b0d4a8eb9db214'
     teamfinance = '0xe2fe530c047f2d85298b07d9333c05737f1435fb'
     pinklock = '0x71b5759d73262fbb223956913ecf4ecc51057641'
-    lockers = [burner, uncx, teamfinance, pinklock]
+    lockers = [uncx, teamfinance, pinklock]
 
     logs = logs[:100]
     for log in logs:
@@ -130,12 +131,12 @@ async def search_for_creations():
         to_block = latest_block - (back_stretch - 2*width)
         print(f'Parsing logs from {from_block} to {to_block}')
 
+        temp_tokens = []
         filter_params = {
     	'fromBlock': from_block,
     	'toBlock': to_block,
     	'topics': [CREATION_EVENT_SIGNATURE]}
         logs = w3.eth.get_logs(filter_params)
-        print('parsed logs')
         for log in logs:
             token_address =  Web3.to_checksum_address(f"0x{str(w3.to_hex(log['topics'][1]))[26:]}")
             counter_address = Web3.to_checksum_address(f"0x{str(w3.to_hex(log['topics'][2]))[26:]}")
@@ -143,7 +144,9 @@ async def search_for_creations():
             contract = w3.eth.contract(token_address , abi = abi)
             token_name = contract.functions.name().call()
             token_symbol = contract.functions.symbol().call()
-
+            temp_tokens.append(token_address)
+            if token_address in tokens:
+                continue
             price = latest_token_price(token_address, counter_address, pair_address)
             if price > 0:
                 print(f'Name: {token_name}')
@@ -155,6 +158,10 @@ async def search_for_creations():
                 text = f"🟢 LIQUIDITY LOCKED 🟢\n\nSymbol: {token_symbol}\n{message}" if (is_locked) else f"⚠ LIQUIDITY NOT LOCKED ⚠\n\nSymbol: {token_symbol}\n{message}"
                 print(text)
                 send_message = (await bot.sendMessage(chat_id=chat_id, text=text, parse_mode = 'MarkdownV2')) if (is_locked) else False
+		    
+        tokens.clear()
+        tokens.extend(temp_tokens)
+	    
         absence = time.time()-p_start
         print(f'Finished search round in {round(absence)} seconds.')
         knockout = 180
