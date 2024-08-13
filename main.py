@@ -106,7 +106,7 @@ def latest_token_price(token_address, counter_address, pair_address):
         return price
     return 0
 
-async def start_up(bot):
+async def search_for_creations():
     global w3
     global TRANSFER_EVENT_SIGNATURE
     global CREATION_EVENT_SIGNATURE
@@ -121,51 +121,50 @@ async def start_up(bot):
     await bot.sendMessage(chat_id=chat_id, text="Bravo Six, Going Dark")
     print("Bravo Six, Going Dark")
 
-async def search_for_creations(bot, from_block, to_block):
-    filter_params = {
-	'fromBlock': from_block,
-	'toBlock': to_block,
-	'topics': [CREATION_EVENT_SIGNATURE]}
-    logs = w3.eth.get_logs(filter_params)
-    print('parsed logs')
-    for log in logs:
-        token_address =  Web3.to_checksum_address(f"0x{str(w3.to_hex(log['topics'][1]))[26:]}")
-        counter_address = Web3.to_checksum_address(f"0x{str(w3.to_hex(log['topics'][2]))[26:]}")
-        pair_address = Web3.to_checksum_address(f"0x{str(w3.to_hex(log['data']))[26:66]}")
+    while True:
+        p_start = time.time()
+        latest_block = w3.eth.block_number
+        print(f'Took {latest_block} as latest block')
+        from_block = latest_block - (back_stretch - width)
+        to_block = latest_block - (back_stretch - 2*width)
+        print(f'Parsing logs from {from_block} to {to_block}')
 
-        contract = w3.eth.contract(token_address , abi = abi)
-        token_name = contract.functions.name().call()
-        token_symbol = contract.functions.symbol().call()
+        filter_params = {
+    	'fromBlock': from_block,
+    	'toBlock': to_block,
+    	'topics': [CREATION_EVENT_SIGNATURE]}
+        logs = w3.eth.get_logs(filter_params)
+        print('parsed logs')
+        for log in logs:
+            token_address =  Web3.to_checksum_address(f"0x{str(w3.to_hex(log['topics'][1]))[26:]}")
+            counter_address = Web3.to_checksum_address(f"0x{str(w3.to_hex(log['topics'][2]))[26:]}")
+            pair_address = Web3.to_checksum_address(f"0x{str(w3.to_hex(log['data']))[26:66]}")
+            contract = w3.eth.contract(token_address , abi = abi)
+            token_name = contract.functions.name().call()
+            token_symbol = contract.functions.symbol().call()
 
-        price = latest_token_price(token_address, counter_address, pair_address)
-        if price > 0:
-            print(f'Name: {token_name}')
-            print(f'Symbol: {token_symbol}')
-            print(pair_address)
-            price = str("{:e}".format(price))
-            is_locked = locked(pair_address, int(log['blockNumber']))
-            message = msg_construct(token_address, pair_address, price)
-            text = f"🟢 LIQUIDITY LOCKED 🟢\n\nSymbol: {token_symbol}\n{message}" if (is_locked) else f"⚠ LIQUIDITY NOT LOCKED ⚠\n\nSymbol: {token_symbol}\n{message}"
-            print(text)
-            send_message = (await bot.sendMessage(chat_id=chat_id, text=text, parse_mode = 'MarkdownV2')) if (is_locked) else False
+            price = latest_token_price(token_address, counter_address, pair_address)
+            if price > 0:
+                print(f'Name: {token_name}')
+                print(f'Symbol: {token_symbol}')
+                print(pair_address)
+                price = str("{:e}".format(price))
+                is_locked = locked(pair_address, int(log['blockNumber']))
+                message = msg_construct(token_address, pair_address, price)
+                text = f"🟢 LIQUIDITY LOCKED 🟢\n\nSymbol: {token_symbol}\n{message}" if (is_locked) else f"⚠ LIQUIDITY NOT LOCKED ⚠\n\nSymbol: {token_symbol}\n{message}"
+                print(text)
+                send_message = (await bot.sendMessage(chat_id=chat_id, text=text, parse_mode = 'MarkdownV2')) if (is_locked) else False
+        absence = time.time()-p_start
+        print(f'Finished search round in {round(absence)} seconds.')
+        knockout = 180
+        if knockout - absence > 0:
+            print(f'Taking a well deserved {round((knockout - absence)/60)}-minute break...')
+            time.sleep(knockout - absence)
 
 def main():
-    bot = telegram.Bot(os.environ['TELEBOTAPI'])
-    asyncio.run(start_up(bot))
     while True:
         try:
-            p_start = time.time()
-            latest_block = w3.eth.block_number
-            from_block = latest_block - (back_stretch - width)
-            to_block = latest_block - (back_stretch - 2*width)
-            print(from_block, to_block)
-            asyncio.run(search_for_creations(bot, from_block, to_block))
-            absence = time.time()-p_start
-            print(f'Finished search round in {round(absence)} seconds.')
-            knockout = 180
-            if knockout - absence > 0:
-                print(f'Taking a well deserved {round((knockout - absence)/60)}-minute break...')
-                time.sleep(knockout - absence)
+            asyncio.run(search_for_creations())
         except:
             print(traceback.format_exc())
             time.sleep(60)
