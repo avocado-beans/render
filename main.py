@@ -11,11 +11,10 @@ chain = 'ethereum'
 chat_id = '-1002184767994'
 scannerkey = os.environ['ETHCHAINAPI']
 provider_url = f'https://mainnet.infura.io/v3/{os.environ['INFURAKEY']}'
+abi = [{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"}]
 
 w3 = Web3(Web3.HTTPProvider(provider_url, request_kwargs={'timeout': 60}))
 print(w3.is_connected())
-
-abi = [{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"}]
 
 blockspermin = 20
 minutes = 5
@@ -46,9 +45,7 @@ def msg_construct(token_address, pair_address, price):
     text = f"Current Price: [{price}]({cmcHL})\nToken Address: [{token_address}]({token_addressHL})\nLP Address: [{pair_address}]({lp_addressHL})\n"
     return text
 
-
 def locked(pair_address, from_block):
-
     filter_params = {
 	'fromBlock': from_block,
 	'toBlock': w3.eth.block_number,
@@ -104,7 +101,6 @@ def get_balance(wallet_address, token_address):
             decimals = 18
 
         return float(balance)/(10**decimals)
-
     except:
         return -1
 
