@@ -327,7 +327,7 @@ def get_contract_wallet_txns(token_address, latest_block, back_stretch):
                     token_balance = get_balance(address, token_address)
 
                     if ((wbnb_balance > 1 and usd_balance == 0.0) or (usd_balance > 1000 and wbnb_balance == 0.0)) and (token_balance > 1):
-                        if is_lpage(address):
+                        if True:
                             is_locked = lockedburned(address, blockNum)
                             print('audited one possible LP')
                             if (wbnb_balance > 1):
