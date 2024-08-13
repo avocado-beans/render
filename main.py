@@ -129,9 +129,9 @@ async def search_for_creations(bot, from_block, to_block):
     logs = w3.eth.get_logs(filter_params)
     print('parsed logs')
     for log in logs:
-        token_address =  Web3.to_checksum_address(f'0x{str(w3.to_hex(log['topics'][1]))[26:]}')
-        counter_address = Web3.to_checksum_address(f'0x{str(w3.to_hex(log['topics'][2]))[26:]}')
-        pair_address = Web3.to_checksum_address(f'0x{str(w3.to_hex(log['data']))[26:66]}')
+        token_address =  Web3.to_checksum_address(f"0x{str(w3.to_hex(log['topics'][1]))[26:]}")
+        counter_address = Web3.to_checksum_address(f"0x{str(w3.to_hex(log['topics'][2]))[26:]}")
+        pair_address = Web3.to_checksum_address(f"0x{str(w3.to_hex(log['data']))[26:66]}")
 
         contract = w3.eth.contract(token_address , abi = abi)
         token_name = contract.functions.name().call()
