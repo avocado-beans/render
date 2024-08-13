@@ -115,7 +115,7 @@ async def search_for_creations():
     CREATION_EVENT_SIGNATURE = w3.keccak(text='PairCreated(address,address,address,uint256)').hex()
 
     bot = telegram.Bot(os.environ['TELEBOTAPI'])
-    await bot.sendMessage(chat_id=chat_id, text=f"code base modified\nrebooted to apply updates")
+    await bot.sendMessage(chat_id=chat_id, text=f"Codebase Modified\nRebooted to Apply Updates")
     time.sleep(10)
     await bot.sendMessage(chat_id=chat_id, text=f"Target Chain: {chain.upper()}")
     time.sleep(2)
