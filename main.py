@@ -10,7 +10,7 @@ import os
 chain = 'ethereum'
 chat_id = '-1002184767994'
 scannerkey = os.environ['ETHCHAINAPI']
-provider_url = f'https://mainnet.infura.io/v3/{os.environ['INFURAKEY']}'
+provider_url = f"https://mainnet.infura.io/v3/{os.environ['INFURAKEY']}"
 abi = [{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"}]
 
 blockspermin = 20
