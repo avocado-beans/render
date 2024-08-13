@@ -1,11 +1,11 @@
+from fastapi import FastAPI, Request
 from web3 import Web3
+import os, traceback
 import threading
-import traceback
 import telegram
 import requests
 import asyncio
 import time
-import os
 
 chain = 'ethereum'
 chat_id = '-1002184767994'
