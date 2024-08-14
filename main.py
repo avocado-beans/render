@@ -6,6 +6,7 @@ import telegram
 import requests
 import asyncio
 import time
+import json
 
 chain = 'ethereum'
 chat_id = '-1002184767994'
@@ -106,7 +107,30 @@ def latest_token_price(token_address, counter_address, pair_address):
         price = (counter_balance*latest_eth_price())/token_balance
         return price
     return 0
+	
+def security_audit(token_address):
+    url = 'https://api.gopluslabs.io/api/v1/token_security/1'
+    params = {'contract_addresses': token_address}
+    response = requests.get(url, params=params).json()['result'][token_address.lower()]
 
+    sell_tax = float(response['sell_tax']) if (('sell_tax' in response) and (response['sell_tax'] != '')) else 1.0
+    buy_tax = float(response['buy_tax']) if (('buy_tax' in response) and (response['buy_tax'] != '')) else 1.0
+
+    contract_checks = [{'is_open_source': '0'},{'is_proxy': '1'},{'is_mintable': '1'},{'can_take_back_ownership': '1'},{'owner_change_balance': '1'},{'hidden_owner': '1'},{'selfdestruct': '1'},{'external_call': '1'}]
+    honeypot_checks = [{'is_honeypot': '1'},{'transfer_pausable': '1'},{'cannot_sell_all': '1'},{'cannot_buy': '1'},{'trading_cooldown': '1'},{'is_anti_whale': '1'},{'anti_whale_modifiable': '1'},{'slippage_modifiable': '1'},{'is_blacklisted': '1'},{'is_whitelisted': '1'},{'personal_slippage_modifiable': '1'}]
+    high_risks = [{'is_honeypot': '1'},{'cannot_sell_all': '1'},{'cannot_buy': '1'}]
+
+    contract_alerts = {}
+    honeypot_alerts = {}
+    high_alerts = {}
+    for item, status in response.items():
+        contract_alerts.update({item: status}) if {item: status} in contract_checks else None
+        honeypot_alerts.update({item: status}) if {item: status} in honeypot_checks else None
+        high_alerts.update({item: status}) if {item: status} in high_risks else None
+
+    tax = {'sell': sell_tax, 'buy': buy_tax,}
+    return {'contract_security':contract_alerts, 'honeypot_risks':honeypot_alerts, 'high_risks':high_alerts, 'tax': tax}
+	
 async def search_for_creations():
     global w3
     global TRANSFER_EVENT_SIGNATURE
@@ -145,8 +169,13 @@ async def search_for_creations():
             token_name = contract.functions.name().call()
             token_symbol = contract.functions.symbol().call()
             temp_tokens.append(token_address)
+		
             if token_address in tokens:
                 continue
+            security_scan = security_audit(token_address)
+            if (security_scan['tax']['sell']>0.1) or (security_scan['tax']['buy']>0.1) or (len(security_scan['high_risks'])>0):
+                continue
+		    
             price = latest_token_price(token_address, counter_address, pair_address)
             if price > 0:
                 print(f'Name: {token_name}')
