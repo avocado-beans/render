@@ -173,7 +173,7 @@ async def search_for_creations():
             if token_address in tokens:
                 continue
             security_scan = security_audit(token_address)
-            if (security_scan['tax']['sell']>0.1) or (security_scan['tax']['buy']>0.1) or (len(security_scan['high_risks'])>0):
+            if (security_scan['tax']['sell']>0.1) or (security_scan['tax']['buy']>0.1) or (len(security_scan['high_risks'])>0) or (len(security_scan['contract_security'])>0):
                 continue
 		    
             price = latest_token_price(token_address, counter_address, pair_address)
