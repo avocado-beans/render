@@ -113,8 +113,8 @@ def security_audit(token_address):
     params = {'contract_addresses': token_address}
     response = requests.get(url, params=params).json()['result'][token_address.lower()]
 
-    sell_tax = float(response['sell_tax']) if (('sell_tax' in response) and (response['sell_tax'] != '')) else 1.0
-    buy_tax = float(response['buy_tax']) if (('buy_tax' in response) and (response['buy_tax'] != '')) else 1.0
+    sell_tax = float(response['sell_tax']) if (('sell_tax' in response) and (response['sell_tax'].replace(' ', '') != '')) else 1.0
+    buy_tax = float(response['buy_tax']) if (('buy_tax' in response) and (response['buy_tax'].replace(' ', '') != '')) else 1.0
 
     contract_checks = [{'is_open_source': '0'},{'is_proxy': '1'},{'is_mintable': '1'},{'can_take_back_ownership': '1'},{'owner_change_balance': '1'},{'hidden_owner': '1'},{'selfdestruct': '1'},{'external_call': '1'}]
     honeypot_checks = [{'is_honeypot': '1'},{'transfer_pausable': '1'},{'cannot_sell_all': '1'},{'cannot_buy': '1'},{'trading_cooldown': '1'},{'is_anti_whale': '1'},{'anti_whale_modifiable': '1'},{'slippage_modifiable': '1'},{'is_blacklisted': '1'},{'is_whitelisted': '1'},{'personal_slippage_modifiable': '1'}]
