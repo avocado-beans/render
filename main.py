@@ -151,8 +151,8 @@ async def search_for_creations():
         p_start = time.time()
         latest_block = w3.eth.block_number
         print(f'Took {latest_block} as latest block')
-        from_block = latest_block - (back_stretch - width)
-        to_block = latest_block - (back_stretch - 2*width)
+        from_block = latest_block - (back_stretch)
+        to_block = latest_block - (back_stretch - width)
         print(f'Parsing logs from {from_block} to {to_block}')
 
         temp_tokens = []
