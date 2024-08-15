@@ -36,9 +36,9 @@ def msg_construct(token_address, pair_address, price):
     lp_addressHL = f"https://etherscan.io/token/{pair_address}"
     cmcHL = f"https://coinmarketcap.com/dexscan/{chain}/{pair_address}"
     price = str(round(float(price[:price.index('e')]), 4)) + price[price.index('e'):]
-    price = '$'+price.replace('.', '\\.').replace('e', ' x 10^').replace('-0', '-').replace('-', '\\-')
+    price = '$'+price.replace('e', ' x 10^').replace('-0', '-')
 
-    text = f"Current Price: [{price}]({cmcHL})\nToken Address: [{token_address}]({token_addressHL})\nLP Address: [{pair_address}]({lp_addressHL})\n"
+    text = f"Current Price: {price}\n({cmcHL})\nToken Address: {token_address}\n({token_addressHL})\nLP Address: {pair_address}\n({lp_addressHL})\n"
     return text
 
 def locked(pair_address, from_block):
@@ -188,7 +188,7 @@ async def search_for_creations():
                 message = msg_construct(token_address, pair_address, price)
                 text = f"- Tax <= 0.1\n- Liquidity Locked\n\nSymbol: {token_symbol}\n{message}" if (is_locked) else f"⚠ LIQUIDITY NOT LOCKED ⚠\n\nSymbol: {token_symbol}\n{message}"
                 print(text)
-                send_message = (await bot.sendMessage(chat_id=chat_id, text=text, parse_mode = 'MarkdownV2')) if (is_locked) else False
+                send_message = (await bot.sendMessage(chat_id=chat_id, text=text)) if (is_locked) else False
 		    
         for token in tokens:
             if not token in temp_tokens:
