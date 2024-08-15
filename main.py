@@ -112,7 +112,8 @@ def security_audit(token_address):
     url = 'https://api.gopluslabs.io/api/v1/token_security/1'
     params = {'contract_addresses': token_address}
     response = requests.get(url, params=params).json()['result'][token_address.lower()]
-
+    print(response)
+	
     sell_tax = float(response['sell_tax']) if (('sell_tax' in response) and (response['sell_tax'].replace(' ', '') != '')) else 1.0
     buy_tax = float(response['buy_tax']) if (('buy_tax' in response) and (response['buy_tax'].replace(' ', '') != '')) else 1.0
 
