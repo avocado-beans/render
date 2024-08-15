@@ -181,7 +181,8 @@ async def search_for_creations():
                 print(f'Name: {token_name}')
                 print(f'Symbol: {token_symbol}')
                 print(pair_address)
-                price = str("{:e}".format(price))
+                print(security_scan['tax'])
+                print(len(security_scan['high_risks']), len(security_scan['contract_security']))
                 is_locked = locked(pair_address, int(log['blockNumber']))
                 message = msg_construct(token_address, pair_address, price)
                 text = f"🟢 TAX < 10% 🟢\n[Liquidity Locked]\n\nSymbol: {token_symbol}\n{message}" if (is_locked) else f"⚠ LIQUIDITY NOT LOCKED ⚠\n\nSymbol: {token_symbol}\n{message}"
