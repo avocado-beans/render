@@ -170,6 +170,7 @@ async def search_for_creations():
     	'topics': [CREATION_EVENT_SIGNATURE]}
         logs = w3.eth.get_logs(filter_params)
         for log in logs:
+            time.sleep(1)
             token_address =  Web3.to_checksum_address(f"0x{str(w3.to_hex(log['topics'][1]))[26:]}")
             counter_address = Web3.to_checksum_address(f"0x{str(w3.to_hex(log['topics'][2]))[26:]}")
             pair_address = Web3.to_checksum_address(f"0x{str(w3.to_hex(log['data']))[26:66]}")
