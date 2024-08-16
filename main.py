@@ -111,26 +111,32 @@ def latest_token_price(token_address, counter_address, pair_address):
 def security_audit(token_address):
     url = 'https://api.gopluslabs.io/api/v1/token_security/1'
     params = {'contract_addresses': token_address}
-    response = requests.get(url, params=params).json()['result'][token_address.lower()]
-    print(response)
-	
-    sell_tax = float(response['sell_tax']) if (('sell_tax' in response) and (response['sell_tax'].replace(' ', '') != '')) else 1.0
-    buy_tax = float(response['buy_tax']) if (('buy_tax' in response) and (response['buy_tax'].replace(' ', '') != '')) else 1.0
+    response = requests.get(url, params=params).json()['result']
+    response = response[token_address.lower()] if len(response) > 0 else None
 
     contract_checks = [{'is_open_source': '0'},{'is_proxy': '1'},{'is_mintable': '1'},{'can_take_back_ownership': '1'},{'owner_change_balance': '1'},{'hidden_owner': '1'},{'selfdestruct': '1'},{'external_call': '1'}]
     honeypot_checks = [{'is_honeypot': '1'},{'transfer_pausable': '1'},{'cannot_sell_all': '1'},{'cannot_buy': '1'},{'trading_cooldown': '1'},{'is_anti_whale': '1'},{'anti_whale_modifiable': '1'},{'slippage_modifiable': '1'},{'is_blacklisted': '1'},{'is_whitelisted': '1'},{'personal_slippage_modifiable': '1'}]
     high_risks = [{'is_honeypot': '1'},{'cannot_sell_all': '1'},{'cannot_buy': '1'}]
 
-    contract_alerts = {}
-    honeypot_alerts = {}
-    high_alerts = {}
-    for item, status in response.items():
-        contract_alerts.update({item: status}) if {item: status} in contract_checks else None
-        honeypot_alerts.update({item: status}) if {item: status} in honeypot_checks else None
-        high_alerts.update({item: status}) if {item: status} in high_risks else None
+    if response:
+        sell_tax = float(response['sell_tax']) if (('sell_tax' in response) and (response['sell_tax'].replace(' ', '') != '')) else 1.0
+        buy_tax = float(response['buy_tax']) if (('buy_tax' in response) and (response['buy_tax'].replace(' ', '') != '')) else 1.0
 
-    tax = {'sell': sell_tax, 'buy': buy_tax,}
-    return {'contract_security':contract_alerts, 'honeypot_risks':honeypot_alerts, 'high_risks':high_alerts, 'tax': tax}
+        contract_alerts = {}
+        honeypot_alerts = {}
+        high_alerts = {}
+        for item, status in response.items():
+            contract_alerts.update({item: status}) if {item: status} in contract_checks else None
+            honeypot_alerts.update({item: status}) if {item: status} in honeypot_checks else None
+            high_alerts.update({item: status}) if {item: status} in high_risks else None
+
+        tax = {'sell': sell_tax, 'buy': buy_tax,}
+        return {'contract_security':contract_alerts, 'honeypot_risks':honeypot_alerts, 'high_risks':high_alerts, 'tax': tax}
+    else:
+        return {'contract_security':contract_checks,
+                'honeypot_risks':honeypot_checks,
+                'high_risks':high_risks,
+                'tax': {'sell':1.0,'buy':1.0}}
 	
 async def search_for_creations():
     global w3
@@ -173,7 +179,10 @@ async def search_for_creations():
 		
             if token_address in tokens:
                 continue
-            security_scan = security_audit(token_address)
+            try:
+                security_scan = security_audit(token_address)
+            except:
+                continue
             if (security_scan['tax']['sell']>0.1) or (security_scan['tax']['buy']>0.1) or (len(security_scan['high_risks'])>0) or (len(security_scan['contract_security'])>0):
                 continue
 		    
