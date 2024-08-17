@@ -6,7 +6,6 @@ import telegram
 import requests
 import asyncio
 import time
-import json
 
 chain = 'bsc'
 chain_id = {
@@ -14,12 +13,11 @@ chain_id = {
 'bsc': 56,
 }
 chat_id = '-1002184767994'
-scannerkey = os.environ['ETHCHAINAPI']
 scannerkey = os.environ['BSCCHAINAPI']
-scannerurl = 'https://api.bscscan.com/api'
-counter_tkns = ['0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c', '0x55d398326f99059ff775485246999027b3197955']
+scannerurl = 'https://api.bscscan.com/api/'
+counter_tkns = ['0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c', '0x55d398326f99059ff775485246999027b3197955', '0xe9e7cea3dedca5984780bafc599bd69add087d56']
 
-explorerurl = 'https://bscscan.io'
+explorerurl = 'https://bscscan.com'
 ethprice = 'bnbprice'
 provider_url = f"https://bsc-mainnet.infura.io/v3/{os.environ['INFURAKEY']}"
 abi = [{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"}]
@@ -65,7 +63,11 @@ def locked(pair_address, from_block):
     teamfinance = '0xe2fe530c047f2d85298b07d9333c05737f1435fb'
     pinklock = '0x71b5759d73262fbb223956913ecf4ecc51057641'
 
-    lockers = [uncx, teamfinance, pinklock, burner]
+    uncx = '0xC765bddB93b0D1c1A88282BA0fa6B2d00E3e0c83'.lower()
+    teamfinance = '0xe2fe530c047f2d85298b07d9333c05737f1435fb'
+    pinklock = '0x407993575c91ce7643a4d4ccacc9a98c36ee1bbe'
+
+    lockers = [uncx, pinklock, burner]
 
     logs = logs[:100]
     for log in logs:
@@ -115,7 +117,7 @@ def latest_token_price(token_address, counter_address, pair_address):
     token_balance = get_balance(pair_address, token_address)
     if token_balance > 0 and (counter_address.lower() in counter_tkns):
         counter_balance = get_balance(pair_address, counter_address)
-        price = (counter_balance*latest_eth_price())/token_balance
+        price = (counter_balance*latest_eth_price())/token_balance if (counter_address.lower() == counter_tkns[0]) else counter_balance/token_balance
         return price
     return 0
 
@@ -180,10 +182,12 @@ async def search_for_creations():
     	'toBlock': to_block,
     	'topics': [CREATION_EVENT_SIGNATURE]}
         logs = w3.eth.get_logs(filter_params)
+        print(len(logs))
+
         for log in logs:
             time.sleep(1)
-            token_address =  Web3.to_checksum_address(f"0x{str(w3.to_hex(log['topics'][1]))[26:]}")
-            counter_address = Web3.to_checksum_address(f"0x{str(w3.to_hex(log['topics'][2]))[26:]}")
+            token_address =  Web3.to_checksum_address(f"0x{str(w3.to_hex(log['topics'][1]))[26:]}") if (not f"0x{str(w3.to_hex(log['topics'][1]))[26:]}" in counter_tkns) else Web3.to_checksum_address(f"0x{str(w3.to_hex(log['topics'][2]))[26:]}")
+            counter_address = Web3.to_checksum_address(f"0x{str(w3.to_hex(log['topics'][2]))[26:]}") if (f"0x{str(w3.to_hex(log['topics'][2]))[26:]}" in counter_tkns) else Web3.to_checksum_address(f"0x{str(w3.to_hex(log['topics'][1]))[26:]}")
             pair_address = Web3.to_checksum_address(f"0x{str(w3.to_hex(log['data']))[26:66]}")
             contract = w3.eth.contract(token_address , abi = abi)
             token_name = contract.functions.name().call()
