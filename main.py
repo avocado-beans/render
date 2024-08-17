@@ -8,10 +8,20 @@ import asyncio
 import time
 import json
 
-chain = 'ethereum'
+chain = 'bsc'
+chain_id = {
+'ethereum': 1,
+'bsc': 56,
+}
 chat_id = '-1002184767994'
 scannerkey = os.environ['ETHCHAINAPI']
-provider_url = f"https://mainnet.infura.io/v3/{os.environ['INFURAKEY']}"
+scannerkey = os.environ['BSCCHAINAPI']
+scannerurl = 'https://api.bscscan.io/api/'
+counter_tkns = ['0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c', '0x55d398326f99059ff775485246999027b3197955']
+
+explorerurl = 'https://bscscan.io'
+ethprice = 'bnbprice'
+provider_url = f"https://bsc-mainnet.infura.io/v3/{os.environ['INFURAKEY']}"
 abi = [{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"}]
 
 blockspermin = 20
@@ -22,18 +32,18 @@ back_stretch = back_stretch_minutes*blockspermin
 
 tokens = []
 def latest_eth_price():
-    url = 'https://api.etherscan.io/api/'
+    url = scannerurl
     params = {
 	'module': 'stats',
-	'action': 'ethprice',
+	'action': ethprice,
 	'apikey': scannerkey,
     }
     response = requests.get(url, params=params)
     return float(response.json()['result']['ethusd'])
 
 def msg_construct(token_address, pair_address, price):
-    token_addressHL = f"https://etherscan.io/token/{token_address}"
-    lp_addressHL = f"https://etherscan.io/token/{pair_address}"
+    token_addressHL = f"{explorerurl}/token/{token_address}"
+    lp_addressHL = f"{explorerurl}/token/{pair_address}"
     cmcHL = f"https://coinmarketcap.com/dexscan/{chain}/{pair_address}"
     price = str(round(float(price[:price.index('e')]), 4)) + price[price.index('e'):]
     price = '$'+price.replace('e', ' x 10^').replace('-0', '-')
@@ -54,7 +64,8 @@ def locked(pair_address, from_block):
     uncx = '0x663a5c229c09b049e36dcc11a9b0d4a8eb9db214'
     teamfinance = '0xe2fe530c047f2d85298b07d9333c05737f1435fb'
     pinklock = '0x71b5759d73262fbb223956913ecf4ecc51057641'
-    lockers = [uncx, teamfinance, pinklock]
+
+    lockers = [uncx, teamfinance, pinklock, burner]
 
     logs = logs[:100]
     for log in logs:
@@ -63,12 +74,12 @@ def locked(pair_address, from_block):
 
         for address in [sender_address, recipient_address]:
             address = f'0x{address[26:]}'
-            if address in lockers:
+            if address.lower() in lockers:
                 return True
     return False
 
 def get_abi(token_address):
-    url = 'https://api.etherscan.io/api/'
+    url = scannerurl
     params = {
 	'module': 'contract',
 	'action': 'getabi',
@@ -78,7 +89,7 @@ def get_abi(token_address):
     return requests.get(url, params=params).json()['result']
 
 def get_balance(wallet_address, token_address):
-    url = 'https://api.etherscan.io/api/'
+    url = scannerurl
     params = {
 	'module': 'account',
 	'action': 'tokenbalance',
@@ -102,14 +113,14 @@ def get_balance(wallet_address, token_address):
 
 def latest_token_price(token_address, counter_address, pair_address):
     token_balance = get_balance(pair_address, token_address)
-    if token_balance > 0 and counter_address.lower() == '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2':
+    if token_balance > 0 and (counter_address.lower() in counter_tkns):
         counter_balance = get_balance(pair_address, counter_address)
         price = (counter_balance*latest_eth_price())/token_balance
         return price
     return 0
-	
+
 def security_audit(token_address):
-    url = 'https://api.gopluslabs.io/api/v1/token_security/1'
+    url = f'https://api.gopluslabs.io/api/v1/token_security/{chain_id[chain.lower()]}'
     params = {'contract_addresses': token_address}
     response = requests.get(url, params=params).json()['result']
     response = response[token_address.lower()] if len(response) > 0 else None
@@ -138,7 +149,7 @@ def security_audit(token_address):
                 'honeypot_risks':honeypot_checks,
                 'high_risks':high_risks,
                 'tax': {'sell':1.0,'buy':1.0}}
-	
+
 async def search_for_creations():
     global w3
     global TRANSFER_EVENT_SIGNATURE
@@ -178,7 +189,7 @@ async def search_for_creations():
             token_name = contract.functions.name().call()
             token_symbol = contract.functions.symbol().call()
             temp_tokens.append(token_address)
-		
+
             if token_address in tokens:
                 continue
             try:
@@ -187,7 +198,7 @@ async def search_for_creations():
                 continue
             if (security_scan['tax']['sell']>0.1) or (security_scan['tax']['buy']>0.1) or (len(security_scan['high_risks'])>0) or (len(security_scan['contract_security'])>0):
                 continue
-		    
+
             price = latest_token_price(token_address, counter_address, pair_address)
             if price > 0:
                 print(f'Name: {token_name}')
@@ -201,12 +212,12 @@ async def search_for_creations():
                 text = f"- Tax <= 0.1\n- Liquidity Locked\n\nSymbol: {token_symbol}\n{message}" if (is_locked) else f"⚠ LIQUIDITY NOT LOCKED ⚠\n\nSymbol: {token_symbol}\n{message}"
                 print(text)
                 send_message = (await bot.sendMessage(chat_id=chat_id, text=text)) if (is_locked) else temp_tokens.remove(token_address)
-		    
+
         for token in tokens:
             if not token in temp_tokens:
                 tokens.remove(token)
         tokens.extend(temp_tokens)
-	    
+
         absence = time.time()-p_start
         print(f'Finished search round in {round(absence)} seconds.')
         knockout = 180
@@ -221,7 +232,7 @@ def main():
         except:
             print(traceback.format_exc())
             time.sleep(60)
-		
+
 mainthread = threading.Thread(target=main,)
 mainthread.start()
 
