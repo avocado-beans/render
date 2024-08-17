@@ -16,7 +16,7 @@ chain_id = {
 chat_id = '-1002184767994'
 scannerkey = os.environ['ETHCHAINAPI']
 scannerkey = os.environ['BSCCHAINAPI']
-scannerurl = 'https://api.bscscan.io/api/'
+scannerurl = 'https://api.bscscan.com/api'
 counter_tkns = ['0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c', '0x55d398326f99059ff775485246999027b3197955']
 
 explorerurl = 'https://bscscan.io'
