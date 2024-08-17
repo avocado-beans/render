@@ -102,8 +102,8 @@ def get_balance(wallet_address, token_address):
     }
     balance = requests.get(url, params=params).json()['result']
     try:
-        abi = get_abi(token_address)
-        token = w3.eth.contract(address=Web3.to_checksum_address(token_address), abi=abi) # declaring the token contract
+        l_abi = get_abi(token_address)
+        token = w3.eth.contract(address=Web3.to_checksum_address(token_address), abi=l_abi) # declaring the token contract
         try:
             decimals = int(token.functions.decimals().call())
         except:
@@ -189,7 +189,7 @@ async def search_for_creations():
             token_address =  Web3.to_checksum_address(f"0x{str(w3.to_hex(log['topics'][1]))[26:]}") if (not f"0x{str(w3.to_hex(log['topics'][1]))[26:]}" in counter_tkns) else Web3.to_checksum_address(f"0x{str(w3.to_hex(log['topics'][2]))[26:]}")
             counter_address = Web3.to_checksum_address(f"0x{str(w3.to_hex(log['topics'][2]))[26:]}") if (f"0x{str(w3.to_hex(log['topics'][2]))[26:]}" in counter_tkns) else Web3.to_checksum_address(f"0x{str(w3.to_hex(log['topics'][1]))[26:]}")
             pair_address = Web3.to_checksum_address(f"0x{str(w3.to_hex(log['data']))[26:66]}")
-            contract = w3.eth.contract(token_address , abi = abi)
+            contract = w3.eth.contract(token_address , abi=abi)
             token_name = contract.functions.name().call()
             token_symbol = contract.functions.symbol().call()
             temp_tokens.append(token_address)
