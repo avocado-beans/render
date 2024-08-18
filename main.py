@@ -39,6 +39,16 @@ def get_source(token_address):
     }
     return True if ('require(currentAllowance == 0' in str(requests.get(url, params=params).json()['result'][0]['SourceCode'])) else False
 
+def get_creator_address(token_address):
+    url = scannerurl
+    params = {
+	'module': 'contract',
+	'action': 'getcontractcreation',
+	'contractaddresses': Web3.to_checksum_address(token_address),
+	'apikey': scannerkey,
+    }
+    return requests.get(url, params=params).json()['result'][0]['contractCreator']
+
 def latest_eth_price():
     url = scannerurl
     params = {
@@ -223,7 +233,7 @@ async def search_for_creations():
                 price = str("{:e}".format(price))
                 is_locked = locked(pair_address, int(log['blockNumber']))
                 message = msg_construct(token_address, pair_address, price)
-                text = f"- Tax <= 0.1\n- Liquidity Locked\n- Contains suspicious code: {get_source(token_address)}\n\nSymbol: {token_symbol}\n{message}" if (is_locked) else f"⚠ LIQUIDITY NOT LOCKED ⚠\n\nSymbol: {token_symbol}\n{message}"
+                text = f"- Tax <= 0.1\n- Liquidity Locked\n- Creator Address: {get_creator_address(token_address)}\n- Contains suspicious code: {get_source(token_address)}\n\nSymbol: {token_symbol}\n{message}" if (is_locked) else f"⚠ LIQUIDITY NOT LOCKED ⚠\n\nSymbol: {token_symbol}\n{message}"
                 print(text)
                 send_message = (await bot.sendMessage(chat_id=chat_id, text=text)) if (is_locked) else temp_tokens.remove(token_address)
 
