@@ -37,7 +37,7 @@ def get_source(token_address):
 	'address': Web3.to_checksum_address(token_address),
 	'apikey': scannerkey,
     }
-    return True if ('require(currentAllowance == 0' in requests.get(url, params=params).json()['result'][0]['SourceCode']) else False
+    return True if ('require(currentAllowance == 0' in str(requests.get(url, params=params).json()['result'][0]['SourceCode'])) else False
 
 def latest_eth_price():
     url = scannerurl
