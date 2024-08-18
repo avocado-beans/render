@@ -150,7 +150,7 @@ def security_audit(token_address):
     contract_checks = [{'is_open_source': '0'},{'is_proxy': '1'},{'is_mintable': '1'},{'can_take_back_ownership': '1'},{'owner_change_balance': '1'},{'hidden_owner': '1'},{'selfdestruct': '1'},{'external_call': '1'}]
     honeypot_checks = [{'is_honeypot': '1'},{'transfer_pausable': '1'},{'cannot_sell_all': '1'},{'cannot_buy': '1'},{'trading_cooldown': '1'},{'is_anti_whale': '1'},{'anti_whale_modifiable': '1'},{'slippage_modifiable': '1'},{'is_blacklisted': '1'},{'is_whitelisted': '1'},{'personal_slippage_modifiable': '1'}]
 
-    high_risks = [{'is_honeypot': '1'},{'transfer_pausable': '1'},{'cannot_sell_all': '1'},{'cannot_buy': '1'},{'slippage_modifiable': '1'},{'personal_slippage_modifiable': '1'}]
+    high_risks = [{'is_open_source': '0'},{'is_proxy': '1'},{'is_mintable': '1'},{'can_take_back_ownership': '1'},{'owner_change_balance': '1'},{'hidden_owner': '1'},{'selfdestruct': '1'},{'external_call': '1'},{'is_honeypot': '1'},{'transfer_pausable': '1'},{'cannot_sell_all': '1'},{'cannot_buy': '1'},{'slippage_modifiable': '1'},{'personal_slippage_modifiable': '1'}]
 
     if response:
         sell_tax = float(response['sell_tax']) if (('sell_tax' in response) and (response['sell_tax'].replace(' ', '') != '')) else 1.0
@@ -165,7 +165,7 @@ def security_audit(token_address):
             high_alerts.update({item: status}) if {item: status} in high_risks else None
 
         tax = {'sell': sell_tax, 'buy': buy_tax,}
-        return {'contract_security':contract_alerts, 'honeypot_risks':honeypot_alerts, 'high_risks':high_alerts, 'tax': tax}
+        return {'contract_security':{}, 'honeypot_risks':{}, 'high_risks':high_alerts, 'tax': tax}
     else:
         return {'contract_security':contract_checks,
                 'honeypot_risks':honeypot_checks,
