@@ -172,6 +172,15 @@ def security_audit(token_address):
                 'high_risks':high_risks,
                 'tax': {'sell':1.0,'buy':1.0}}
 
+def check_ownership(token_address):
+    try:
+        contract = w3.eth.contract(address=Web3.to_checksum_address(token_address), abi=get_abi(token_address))
+        token_owner = contract.functions.owner().call()
+        return token_owner
+    except:
+        print('Owner is Hidden')
+    return None
+
 async def search_for_creations():
     global w3
     global TRANSFER_EVENT_SIGNATURE
@@ -222,6 +231,9 @@ async def search_for_creations():
                 continue
             if (security_scan['tax']['sell']>0.1) or (security_scan['tax']['buy']>0.1) or (len(security_scan['high_risks'])>0) or (len(security_scan['contract_security'])>0):
                 continue
+            owner = check_ownership(token_address)
+            if owner is None:
+                pass
 
             price = latest_token_price(token_address, counter_address, pair_address)
             if price > 0:
@@ -233,7 +245,7 @@ async def search_for_creations():
                 price = str("{:e}".format(price))
                 is_locked = locked(pair_address, int(log['blockNumber']))
                 message = msg_construct(token_address, pair_address, price)
-                text = f"- Tax <= 0.1\n- Liquidity Locked\n- Creator Address: {get_creator_address(token_address)}\n- Contains suspicious code: {get_source(token_address)}\n\nSymbol: {token_symbol}\n{message}" if (is_locked) else f"⚠ LIQUIDITY NOT LOCKED ⚠\n\nSymbol: {token_symbol}\n{message}"
+                text = f"- Tax <= 0.1\n- Liquidity Locked\n- Creator Address: {get_creator_address(token_address)}\n- Owner Address: {owner}\n- Contains suspicious code: {get_source(token_address)}\n\nSymbol: {token_symbol}\n{message}" if (is_locked) else f"⚠ LIQUIDITY NOT LOCKED ⚠\n\nSymbol: {token_symbol}\n{message}"
                 print(text)
                 send_message = (await bot.sendMessage(chat_id=chat_id, text=text)) if (is_locked) else temp_tokens.remove(token_address)
 
