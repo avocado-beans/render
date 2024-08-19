@@ -133,6 +133,15 @@ def get_balance(wallet_address, token_address):
     except:
         return -1
 
+def check_ownership(token_address):
+    try:
+        contract = w3.eth.contract(address=Web3.to_checksum_address(token_address), abi=get_abi(token_address))
+        token_owner = contract.functions.owner().call()
+        return token_owner
+    except:
+        print('Owner is Hidden')
+    return None
+
 def latest_token_price(token_address, counter_address, pair_address):
     token_balance = get_balance(pair_address, token_address)
     if token_balance > 0 and (counter_address.lower() in counter_tkns):
@@ -224,7 +233,7 @@ async def search_for_creations():
                 continue
             if (security_scan['tax']['sell']>0.1) or (security_scan['tax']['buy']>0.1) or (len(security_scan['high_risks'])>0) or (len(security_scan['contract_security'])>0):
                 continue
-            owner = security_scan['owner']
+            owner = security_scan['owner'] if (security_scan['owner'] != None) else check_ownership(token_address)
             if owner is None:
                 continue
 
