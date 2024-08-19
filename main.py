@@ -150,11 +150,12 @@ def security_audit(token_address):
     contract_checks = [{'is_open_source': '0'},{'is_proxy': '1'},{'is_mintable': '1'},{'can_take_back_ownership': '1'},{'owner_change_balance': '1'},{'hidden_owner': '1'},{'selfdestruct': '1'},{'external_call': '1'}]
     honeypot_checks = [{'is_honeypot': '1'},{'transfer_pausable': '1'},{'cannot_sell_all': '1'},{'cannot_buy': '1'},{'trading_cooldown': '1'},{'is_anti_whale': '1'},{'anti_whale_modifiable': '1'},{'slippage_modifiable': '1'},{'is_blacklisted': '1'},{'is_whitelisted': '1'},{'personal_slippage_modifiable': '1'}]
 
-    high_risks = [{'is_open_source': '0'},{'is_proxy': '1'},{'is_mintable': '1'},{'can_take_back_ownership': '1'},{'owner_change_balance': '1'},{'hidden_owner': '1'},{'selfdestruct': '1'},{'external_call': '1'},{'is_honeypot': '1'},{'transfer_pausable': '1'},{'cannot_sell_all': '1'},{'cannot_buy': '1'},{'slippage_modifiable': '1'},{'personal_slippage_modifiable': '1'}]
+    high_risks = [{'is_honeypot': '1'},{'transfer_pausable': '1'},{'cannot_sell_all': '1'},{'cannot_buy': '1'},{'trading_cooldown': '1'},{'is_anti_whale': '1'},{'anti_whale_modifiable': '1'},{'slippage_modifiable': '1'},{'is_blacklisted': '1'},{'is_whitelisted': '1'},{'personal_slippage_modifiable': '1'}]
 
     if response:
         sell_tax = float(response['sell_tax']) if (('sell_tax' in response) and (response['sell_tax'].replace(' ', '') != '')) else 1.0
         buy_tax = float(response['buy_tax']) if (('buy_tax' in response) and (response['buy_tax'].replace(' ', '') != '')) else 1.0
+        owner = response['owner_address'] if (('owner_address' in response) and (response['owner_address'].replace(' ', '') != '')) else None
 
         contract_alerts = {}
         honeypot_alerts = {}
@@ -165,21 +166,13 @@ def security_audit(token_address):
             high_alerts.update({item: status}) if {item: status} in high_risks else None
 
         tax = {'sell': sell_tax, 'buy': buy_tax,}
-        return {'contract_security':{}, 'honeypot_risks':{}, 'high_risks':high_alerts, 'tax': tax}
+        return {'contract_security':contract_alerts, 'honeypot_risks':honeypot_alerts, 'high_risks':high_alerts, 'tax': tax, 'owner': owner}
     else:
         return {'contract_security':contract_checks,
                 'honeypot_risks':honeypot_checks,
                 'high_risks':high_risks,
-                'tax': {'sell':1.0,'buy':1.0}}
-
-def check_ownership(token_address):
-    try:
-        contract = w3.eth.contract(address=Web3.to_checksum_address(token_address), abi=get_abi(token_address))
-        token_owner = contract.functions.owner().call()
-        return token_owner
-    except:
-        print('Owner is Hidden')
-    return None
+                'tax': {'sell':1.0,'buy':1.0},
+                'owner': None}
 
 async def search_for_creations():
     global w3
@@ -231,7 +224,7 @@ async def search_for_creations():
                 continue
             if (security_scan['tax']['sell']>0.1) or (security_scan['tax']['buy']>0.1) or (len(security_scan['high_risks'])>0) or (len(security_scan['contract_security'])>0):
                 continue
-            owner = check_ownership(token_address)
+            owner = security_scan['owner']
             if owner is None:
                 continue
 
