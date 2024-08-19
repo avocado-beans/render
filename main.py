@@ -233,7 +233,7 @@ async def search_for_creations():
                 continue
             owner = check_ownership(token_address)
             if owner is None:
-                pass
+                continue
 
             price = latest_token_price(token_address, counter_address, pair_address)
             if price > 0:
