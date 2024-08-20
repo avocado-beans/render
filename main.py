@@ -250,7 +250,7 @@ async def search_for_creations():
             owner = security_scan['owner'] if (security_scan['owner'] != None) else check_ownership(token_address)
             if owner is None:
                 print(token_address)
-                continue
+                pass
 
             counter_balance = get_balance(pair_address, counter_address)/8 if (counter_address == counter_tkns[0]) else get_balance(pair_address, counter_address)/4000
             price = latest_token_price(token_address, counter_address, pair_address)
