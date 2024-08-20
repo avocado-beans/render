@@ -167,7 +167,7 @@ def security_audit(token_address):
         {'owner_change_balance': '1'},
         {'hidden_owner': '1'},
         {'selfdestruct': '1'},
-        #{'external_call': '1'},
+        {'external_call': '1'},
         {'is_honeypot': '1'},
         {'cannot_sell_all': '1'},
         {'cannot_buy': '1'},
