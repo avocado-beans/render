@@ -19,7 +19,7 @@ counter_tkns = ['0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c', '0x55d398326f99059
 
 explorerurl = 'https://bscscan.com'
 ethprice = 'bnbprice'
-provider_url = 'https://bsc-pokt.nodies.appm' #f"https://bsc-mainnet.infura.io/v3/{os.environ['INFURAKEY']}"
+provider_url = 'https://bsc-pokt.nodies.app' #f"https://bsc-mainnet.infura.io/v3/{os.environ['INFURAKEY']}"
 abi = [{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"}]
 
 blockspermin = 20
