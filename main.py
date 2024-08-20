@@ -171,8 +171,6 @@ def security_audit(token_address):
         {'is_honeypot': '1'},
         {'cannot_sell_all': '1'},
         {'cannot_buy': '1'},
-        {'slippage_modifiable': '1'},
-        {'personal_slippage_modifiable': '1'}
     ]
 
     if response:
