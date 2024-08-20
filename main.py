@@ -244,9 +244,12 @@ async def search_for_creations():
             except:
                 continue
             if (security_scan['tax']['sell']>0.1) or (security_scan['tax']['buy']>0.1) or (len(security_scan['high_risks'])>0) or (len(security_scan['contract_security'])>0):
+                print(security_scan['high_risks'])
+                print(token_address)
                 continue
             owner = security_scan['owner'] if (security_scan['owner'] != None) else check_ownership(token_address)
             if owner is None:
+                print(token_address)
                 continue
 
             counter_balance = get_balance(pair_address, counter_address)/8 if (counter_address == counter_tkns[0]) else get_balance(pair_address, counter_address)/4000
