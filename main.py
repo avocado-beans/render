@@ -24,7 +24,7 @@ abi = [{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"",
 
 blockspermin = 20
 minutes = 5
-back_stretch_minutes = 15
+back_stretch_minutes = 10
 width = minutes*blockspermin
 back_stretch = back_stretch_minutes*blockspermin
 
@@ -249,7 +249,7 @@ async def search_for_creations():
             if owner is None:
                 continue
 
-            counter_balance = get_balance(pair_address, counter_address)/10 if (counter_address == counter_tkns[0]) else get_balance(pair_address, counter_address)/5000
+            counter_balance = get_balance(pair_address, counter_address)/8 if (counter_address == counter_tkns[0]) else get_balance(pair_address, counter_address)/4000
             price = latest_token_price(token_address, counter_address, pair_address)
             if (price > 0) and (counter_balance > 1):
                 print(f'Name: {token_name}')
