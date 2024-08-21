@@ -254,7 +254,7 @@ async def search_for_creations():
 
             counter_balance = get_balance(pair_address, counter_address)*latest_eth_price() if (counter_address == counter_tkns[0]) else get_balance(pair_address, counter_address)
             price = latest_token_price(token_address, counter_address, pair_address)
-            if (price > 0): # and (counter_balance > 1):
+            if (price > 0) and (counter_balance > 100):
                 print(f'Name: {token_name}')
                 print(f'Symbol: {token_symbol}')
                 print(pair_address)
