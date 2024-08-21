@@ -246,7 +246,7 @@ async def search_for_creations():
             if (security_scan['tax']['sell']>0.1) or (security_scan['tax']['buy']>0.1) or (len(security_scan['high_risks'])>0) or (len(security_scan['contract_security'])>0):
                 print(security_scan['high_risks'])
                 print(token_address)
-                continue
+                pass
             owner = security_scan['owner'] if (security_scan['owner'] != None) else check_ownership(token_address)
             if owner is None:
                 print(token_address)
@@ -263,7 +263,7 @@ async def search_for_creations():
                 price = str("{:e}".format(price))
                 is_locked = locked(pair_address, int(log['blockNumber']))
                 message = msg_construct(token_address, pair_address, price)
-                text = f"Liquidity Locked\n- Creator Address: {get_creator_address(token_address)}\n- Owner Address: {owner}\n\nSymbol: {token_symbol}\n{message}" if (is_locked) else f"Liquidity NOT Locked\n- Creator Address: {get_creator_address(token_address)}\n- Owner Address: {owner}\n\nSymbol: {token_symbol}\n{message}"
+                text = f"Sell and Buy Tax: {security_scan['tax']['sell']}, {security_scan['tax']['buy']}\nLiquidity Locked\n- Creator Address: {get_creator_address(token_address)}\n- Owner Address: {owner}\n\nSymbol: {token_symbol}\n{message}" if (is_locked) else f"Sell and Buy Tax: {security_scan['tax']['sell']}, {security_scan['tax']['buy']}\nLiquidity NOT Locked\n- Creator Address: {get_creator_address(token_address)}\n- Owner Address: {owner}\n\nSymbol: {token_symbol}\n{message}"
                 print(text)
                 send_message = (await bot.sendMessage(chat_id=chat_id, text=text))# if (is_locked) else temp_tokens.remove(token_address)
 
