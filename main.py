@@ -252,7 +252,7 @@ async def search_for_creations():
                 print(token_address)
                 pass
 
-            counter_balance = get_balance(pair_address, counter_address)/8 if (counter_address == counter_tkns[0]) else get_balance(pair_address, counter_address)/4000
+            counter_balance = get_balance(pair_address, counter_address)*latest_eth_price() if (counter_address == counter_tkns[0]) else get_balance(pair_address, counter_address)
             price = latest_token_price(token_address, counter_address, pair_address)
             if (price > 0): # and (counter_balance > 1):
                 print(f'Name: {token_name}')
@@ -263,7 +263,7 @@ async def search_for_creations():
                 price = str("{:e}".format(price))
                 is_locked = locked(pair_address, int(log['blockNumber']))
                 message = msg_construct(token_address, pair_address, price)
-                text = f"Sell and Buy Tax: {security_scan['tax']['sell']}, {security_scan['tax']['buy']}\nLiquidity Locked\n- Creator Address: {get_creator_address(token_address)}\n- Owner Address: {owner}\n\nSymbol: {token_symbol}\n{message}" if (is_locked) else f"Sell and Buy Tax: {security_scan['tax']['sell']}, {security_scan['tax']['buy']}\nLiquidity NOT Locked\n- Creator Address: {get_creator_address(token_address)}\n- Owner Address: {owner}\n\nSymbol: {token_symbol}\n{message}"
+                text = f"Sell and Buy Tax: {security_scan['tax']['sell']}, {security_scan['tax']['buy']}\nLiquidity Locked, Staked BNB Value: ${round(counter_balance)}\n- Creator Address: {get_creator_address(token_address)}\n- Owner Address: {owner}\n\nSymbol: {token_symbol}\n{message}" if (is_locked) else f"Sell and Buy Tax: {security_scan['tax']['sell']}, {security_scan['tax']['buy']}\nLiquidity NOT Locked, Staked BNB Value: ${round(counter_balance)}\n- Creator Address: {get_creator_address(token_address)}\n- Owner Address: {owner}\n\nSymbol: {token_symbol}\n{message}"
                 print(text)
                 send_message = (await bot.sendMessage(chat_id=chat_id, text=text))# if (is_locked) else temp_tokens.remove(token_address)
 
