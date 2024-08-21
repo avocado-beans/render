@@ -50,7 +50,6 @@ def get_creator_address(token_address):
     return requests.get(url, params=params).json()['result'][0]['contractCreator']
 
 def latest_eth_price():
-    print('getting leates price')
     url = scannerurl
     params = {
 	'module': 'stats',
@@ -253,8 +252,7 @@ async def search_for_creations():
                 print(token_address)
                 pass
 
-            counter_balance = get_balance(pair_address, counter_address)*latest_eth_price() if (counter_address == counter_tkns[0]) else get_balance(pair_address, counter_address)
-            print(counter_balance, counter_address)
+            counter_balance = get_balance(pair_address, counter_address)*latest_eth_price() if (counter_address.lower() == counter_tkns[0]) else get_balance(pair_address, counter_address)
             price = latest_token_price(token_address, counter_address, pair_address)
             if (price > 0) and (counter_balance > 100):
                 print(f'Name: {token_name}')
