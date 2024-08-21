@@ -24,7 +24,7 @@ abi = [{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"",
 
 blockspermin = 20
 minutes = 5
-back_stretch_minutes = 30
+back_stretch_minutes = 5
 width = minutes*blockspermin
 back_stretch = back_stretch_minutes*blockspermin
 
