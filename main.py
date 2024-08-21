@@ -250,7 +250,7 @@ async def search_for_creations():
             owner = security_scan['owner'] if (security_scan['owner'] != None) else check_ownership(token_address)
             if owner is None:
                 print(token_address)
-                continue
+                pass
 
             counter_balance = get_balance(pair_address, counter_address)/8 if (counter_address == counter_tkns[0]) else get_balance(pair_address, counter_address)/4000
             price = latest_token_price(token_address, counter_address, pair_address)
@@ -263,9 +263,9 @@ async def search_for_creations():
                 price = str("{:e}".format(price))
                 is_locked = locked(pair_address, int(log['blockNumber']))
                 message = msg_construct(token_address, pair_address, price)
-                text = f"- Tax <= 0.1\n- Liquidity Locked\n- Creator Address: {get_creator_address(token_address)}\n- Owner Address: {owner}\n\nSymbol: {token_symbol}\n{message}" if (is_locked) else f"⚠ LIQUIDITY NOT LOCKED ⚠\n\nSymbol: {token_symbol}\n{message}"
+                text = f"Liquidity Locked\n- Creator Address: {get_creator_address(token_address)}\n- Owner Address: {owner}\n\nSymbol: {token_symbol}\n{message}" if (is_locked) else f"Liquidity NOT Locked\n- Creator Address: {get_creator_address(token_address)}\n- Owner Address: {owner}\n\nSymbol: {token_symbol}\n{message}"
                 print(text)
-                send_message = (await bot.sendMessage(chat_id=chat_id, text=text)) if (is_locked) else temp_tokens.remove(token_address)
+                send_message = (await bot.sendMessage(chat_id=chat_id, text=text))# if (is_locked) else temp_tokens.remove(token_address)
 
         for token in tokens:
             if not token in temp_tokens:
