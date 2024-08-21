@@ -127,7 +127,7 @@ def get_balance(wallet_address, token_address):
         try:
             decimals = int(token.functions.decimals().call())
         except:
-            decimals = 9
+            decimals = 18
 
         return float(balance)/(10**decimals)
     except:
