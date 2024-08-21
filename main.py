@@ -50,6 +50,7 @@ def get_creator_address(token_address):
     return requests.get(url, params=params).json()['result'][0]['contractCreator']
 
 def latest_eth_price():
+    print('getting leates price')
     url = scannerurl
     params = {
 	'module': 'stats',
